@@ -3,7 +3,7 @@ package models
 import "gorm.io/gorm"
 
 type Student struct {
-	ID                    int    `json:"id"`
+	gorm.Model
 	ClassID               int    `json:"class_id"`
 	Name                  string `json:"name"`
 	Phone                 string `json:"phone"`
@@ -20,7 +20,6 @@ type Student struct {
 	Gender                string `json:"gender"`
 	PreviousSchoolDetails string `json:"previous_school_details"`
 	DOB                   string `json:"dob"`
-	CreatedAt             string `json:"created_at"`
 }
 
 func MigrateStudent(db *gorm.DB) error {
