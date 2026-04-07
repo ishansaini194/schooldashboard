@@ -4,7 +4,7 @@ import "gorm.io/gorm"
 
 type Class struct {
 	gorm.Model
-	ClassNo        int    `json:"class_no"`
+	Class          int    `json:"class"`
 	Section        string `json:"section"`
 	TeacherName    string `json:"teacher_name"`
 	TeacherContact string `json:"teacher_contact"`
