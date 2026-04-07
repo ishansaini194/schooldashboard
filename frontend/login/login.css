@@ -1,0 +1,77 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 320px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+/* Roles */
+.roles {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.role {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid black;
+    background: none;
+    cursor: pointer;
+}
+
+.role.active {
+    border-width: 2px;
+}
+
+/* Inputs */
+.input-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+/* Remember */
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+/* Button */
+button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid black;
+    background: none;
+    cursor: pointer;
+}
+
+/* Forgot */
+.forgot {
+    margin-top: 15px;
+    font-size: 14px;
+}
