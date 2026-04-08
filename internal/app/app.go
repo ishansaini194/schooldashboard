@@ -8,20 +8,32 @@ import (
 )
 
 func New() *server.Server {
-	database.Connect("school.db")
+	database.Connect("/app/data/school.db")
 	database.Run(database.DB)
 
 	srv := server.New()
 
-	srv.App.Use(cors.New())
+	srv.App.Use(cors.New((cors.Config{
+		AllowOrigins: "http://localhost:3000, http://127.0.0.1:3000",
+		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowMethods: "GET, POST, PUT, DELETE",
+	})))
 
 	api := srv.App.Group("/api")
 
-	api.Get("/students/class/:class_id", handlers.GetStudents)
+	// Student routes
+	api.Get("/students/class/:class", handlers.GetStudents)
 	api.Get("/students/:roll_no", handlers.GetStudent)
 	api.Post("/students", handlers.CreateStudent)
 	api.Put("/students/:roll_no", handlers.UpdateStudent)
 	api.Delete("/students/:roll_no", handlers.DeleteStudent)
+
+	// Class routes
+	api.Get("/classes", handlers.GetClasses)
+	api.Get("/classes/:id", handlers.GetClass)
+	api.Post("/classes", handlers.CreateClass)
+	api.Put("/classes/:id", handlers.UpdateClass)
+	api.Delete("/classes/:id", handlers.DeleteClass)
 
 	return srv
 }

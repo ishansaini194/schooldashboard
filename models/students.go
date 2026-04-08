@@ -5,7 +5,7 @@ import "gorm.io/gorm"
 type Student struct {
 	gorm.Model
 	Name                  string `json:"name"`
-	Class                 int    `json:"class"`
+	Class                 string `json:"class"`
 	Section               string `json:"section"`
 	Phone                 string `json:"phone"`
 	RollNo                string `json:"roll_no"`
