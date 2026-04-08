@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+    <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="students.css">
+</head>
+<body>
+
+    <div class="page">
+        <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+                <h1 id="pageTitle">Students</h1>
+                <p id="pageSubtitle">Loading...</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-secondary" onclick="window.location.href='class.html'">← Back</button>
+                <button class="btn-primary" onclick="window.location.href='form.html?class=' + classId">+ Add Student</button>
+            </div>
+        </div>
+
+        <div id="studentList" class="student-list">
+            <div class="empty-state">Loading students...</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../menu.js"></script>
+    <script src="students.js"></script>
+</body>
+</html>
