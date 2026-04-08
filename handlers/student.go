@@ -7,10 +7,10 @@ import (
 )
 
 func GetStudents(c *fiber.Ctx) error {
-	classID := c.Params("class_id")
+	class := c.Params("class")
 
 	var students []models.Student
-	result := database.DB.Where("class_id = ?", classID).Find(&students)
+	result := database.DB.Where("class = ?", class).Find(&students)
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": result.Error.Error()})
 	}
