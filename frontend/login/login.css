@@ -10,6 +10,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #ffffff;
 }
 
 .container {
@@ -36,6 +37,10 @@ h1 {
     cursor: pointer;
 }
 
+.role:first-child {
+    margin-right: 5px;
+}
+
 .role.active {
     border-width: 2px;
 }
@@ -46,19 +51,30 @@ h1 {
     margin-bottom: 15px;
 }
 
+.input-group label {
+    font-size: 14px;
+}
+
 input {
     width: 100%;
     padding: 8px;
     border: none;
     border-bottom: 1px solid black;
+    outline: none;
 }
 
-/* Remember */
+/* Remember checkbox */
 .remember {
     display: flex;
     align-items: center;
-    gap: 5px;
-    margin-bottom: 20px;
+    gap: 6px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.remember input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
 }
 
 /* Button */
@@ -68,6 +84,11 @@ button[type="submit"] {
     border: 1px solid black;
     background: none;
     cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background: black;
+    color: white;
 }
 
 /* Forgot */

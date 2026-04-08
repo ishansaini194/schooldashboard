@@ -47,12 +47,20 @@ func CreateStudent(c *fiber.Ctx) error {
 func UpdateStudent(c *fiber.Ctx) error {
 	rollNo := c.Params("roll_no")
 
+	// first find the existing student
 	var s models.Student
+	result := database.DB.Where("roll_no = ?", rollNo).First(&s)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "student not found"})
+	}
+
+	// parse body into existing student
 	if err := c.BodyParser(&s); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	result := database.DB.Where("roll_no = ?", rollNo).Updates(&s)
+	// save updates all fields
+	result = database.DB.Save(&s)
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": result.Error.Error()})
 	}
