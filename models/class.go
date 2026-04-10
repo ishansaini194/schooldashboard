@@ -8,6 +8,8 @@ type Class struct {
 	Section        string `json:"section"`
 	TeacherName    string `json:"teacher_name"`
 	TeacherContact string `json:"teacher_contact"`
+	TuitionFee     int    `json:"tuition_fee"`
+	TransportFee   int    `json:"transport_fee"`
 }
 
 func MigrateClass(db *gorm.DB) error {
