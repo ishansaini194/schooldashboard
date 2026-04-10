@@ -15,6 +15,10 @@ document.body.insertAdjacentHTML('afterbegin', `
             <li onclick="window.location.href='form.html'">
                 <span class="icon">✦</span> Students
             </li>
+
+            <li onclick="window.location.href='fees.html'">
+                <span class="icon">₹</span> Fees
+            </li>
         </ul>
     </div>
     <div id="overlay"></div>

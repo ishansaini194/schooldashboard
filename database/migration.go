@@ -9,8 +9,8 @@ import (
 
 func Run(db *gorm.DB) {
 	migrations := []func(*gorm.DB) error{
-		models.MigrateClass,   // class first, student depends on it
-		models.MigrateStudent, // student second, fee depends on it
+		models.MigrateClass,
+		models.MigrateStudent,
 		models.MigrateFee,
 	}
 

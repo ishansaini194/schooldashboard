@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,20 +8,30 @@
     <link rel="stylesheet" href="form.css">
     <link rel="stylesheet" href="students.css">
 </head>
+
 <body>
 
     <div class="page">
 
         <!-- Normal Header -->
-        <div class="page-header" id="normalHeader" style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <div class="page-header" id="normalHeader"
+            style="display:flex; justify-content:space-between; align-items:flex-end;">
             <div>
                 <h1>Students</h1>
                 <p id="pageSubtitle">Loading...</p>
             </div>
             <div style="display:flex; gap:10px;">
                 <button class="btn-secondary" onclick="window.location.href='class.html'">← Back</button>
-                <button class="btn-primary" onclick="window.location.href='form.html?class=' + classId">+ Add Student</button>
+                <button class="btn-primary" onclick="window.location.href='form.html?class=' + classId">+ Add
+                    Student</button>
             </div>
+        </div>
+
+        <div class="class-summary-bar" id="classSummary">
+            <div class="cs-class">Loading...</div>
+        </div>
+        <div class="cs-count-wrap">
+            <span id="csCount">— Students</span>
         </div>
 
         <!-- Selection Header -->
@@ -75,4 +86,5 @@
     <script src="../menu.js"></script>
     <script src="students.js"></script>
 </body>
+
 </html>

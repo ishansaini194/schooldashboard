@@ -294,6 +294,22 @@ function renderStudents() {
 
 // ── Load ─────────────────────────────────────────────────────
 
+async function loadClassInfo() {
+    const res = await fetch(`${API}/classes`)
+    const classes = await res.json()
+    const cls = classes.find(c => c.class == classId)
+    if (!cls) return
+
+    document.getElementById('classSummary').innerHTML = `
+        <div class="cs-class">Class ${cls.class} — ${cls.section || '—'}</div>
+        <div class="cs-divider">|</div>
+        <div class="cs-teacher">
+            👤 ${cls.teacher_name || 'No teacher'} 
+            ${cls.teacher_contact ? `· <a href="tel:${cls.teacher_contact}">${cls.teacher_contact}</a>` : ''}
+        </div>
+    `
+}
+
 async function loadStudents() {
     const res = await fetch(`${API}/students/class/${classId}`)
     const students = await res.json()
@@ -302,7 +318,12 @@ async function loadStudents() {
     const subtitle = document.getElementById('pageSubtitle')
     if (subtitle) subtitle.textContent = `${allStudents.length} student${allStudents.length !== 1 ? 's' : ''} in this class`
 
+    // update count in summary bar too
+    const countEl = document.getElementById('csCount')
+    if (countEl) countEl.textContent = `${allStudents.length} Students`
+
     renderStudents()
 }
 
+loadClassInfo()
 loadStudents()
