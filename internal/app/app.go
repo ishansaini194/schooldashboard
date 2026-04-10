@@ -35,5 +35,12 @@ func New() *server.Server {
 	api.Put("/classes/:id", handlers.UpdateClass)
 	api.Delete("/classes/:id", handlers.DeleteClass)
 
+	// fee routes
+	api.Post("/fees/pay", handlers.PayFee)
+	api.Get("/fees/student/:student_id", handlers.GetStudentFees)
+	api.Get("/fees/class/:class/month/:month/year/:year", handlers.GetClassFeeStatus)
+	api.Get("/fees/pending/:class/:month/:year", handlers.GetPendingFees)
+	api.Get("/fees/receipt/:receipt_no", handlers.GetReceipt)
+
 	return srv
 }
