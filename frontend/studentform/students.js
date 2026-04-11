@@ -4,10 +4,15 @@ const params = new URLSearchParams(window.location.search)
 const classId = params.get('class')
 
 let allStudents = []
+let feeStatusMap = {}  // student_id → {status, total_paid}
 let selectedRolls = new Set()
 let selectionMode = false
 let longPressTimer = null
 let longPressFired = false
+
+const now = new Date()
+const currentMonth = now.toLocaleString('default', { month: 'long' })
+const currentYear = now.getFullYear()
 
 function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast')
@@ -31,7 +36,6 @@ function enterSelectionMode(triggerRollNo = null) {
     renderStudents()
     updateSelectionBar()
 
-    // subtle haptic on mobile
     if (navigator.vibrate) navigator.vibrate(30)
 }
 
@@ -74,19 +78,14 @@ function updateSelectionBar() {
     const dlBtn = document.getElementById('downloadBtn')
     const allBtn = document.getElementById('selectAllBtn')
 
-    if (countEl) countEl.textContent = count === 0
-        ? 'Select students'
-        : `${count} of ${total} selected`
-
+    if (countEl) countEl.textContent = count === 0 ? 'Select students' : `${count} of ${total} selected`
     if (dlBtn) {
         dlBtn.disabled = count === 0
         dlBtn.classList.toggle('ready', count > 0)
     }
 
     if (allBtn) {
-        allBtn.textContent = count === allStudents.length && total > 0
-            ? 'Deselect All'
-            : 'Select All'
+        allBtn.textContent = count === allStudents.length && total > 0 ? 'Deselect All' : 'Select All'
     }
 }
 
@@ -102,62 +101,48 @@ function updateRowCheckboxes() {
 // ── Long Press / Right Click ────────────────────────────────
 
 function attachRowEvents(el, rollNo) {
-    // Desktop: right click
     el.addEventListener('contextmenu', (e) => {
         e.preventDefault()
-        if (!selectionMode) {
-            enterSelectionMode(rollNo)
-        }
+        if (!selectionMode) enterSelectionMode(rollNo)
     })
 
-    // Mobile: long press
-    el.addEventListener('touchstart', (e) => {
+    el.addEventListener('touchstart', () => {
         longPressFired = false
         longPressTimer = setTimeout(() => {
             longPressFired = true
-            if (!selectionMode) {
-                enterSelectionMode(rollNo)
-            }
+            if (!selectionMode) enterSelectionMode(rollNo)
         }, 500)
     }, { passive: true })
 
-    el.addEventListener('touchend', () => {
-        clearTimeout(longPressTimer)
-    })
+    el.addEventListener('touchend', () => clearTimeout(longPressTimer))
+    el.addEventListener('touchmove', () => clearTimeout(longPressTimer))
 
-    el.addEventListener('touchmove', () => {
-        clearTimeout(longPressTimer)
-    })
-
-    // Click behavior
-    el.addEventListener('click', (e) => {
+    el.addEventListener('click', () => {
         if (longPressFired) return
-        if (selectionMode) {
-            toggleSelect(rollNo)
-        }
+        if (selectionMode) toggleSelect(rollNo)
     })
 }
 
 // ── Field Picker ─────────────────────────────────────────────
 
 const ALL_FIELDS = [
-    { key: 'roll_no',                label: 'Roll No',         default: true  },
-    { key: 'name',                   label: 'Name',            default: true  },
-    { key: 'class',                  label: 'Class',           default: true  },
-    { key: 'section',                label: 'Section',         default: true  },
-    { key: 'phone',                  label: 'Phone',           default: true  },
-    { key: 'gender',                 label: 'Gender',          default: true  },
-    { key: 'dob',                    label: 'Date of Birth',   default: false },
-    { key: 'aadhar_no',              label: 'Aadhar No',       default: false },
-    { key: 'epunjab_id',             label: 'ePunjab ID',      default: false },
-    { key: 'father_name',            label: 'Father Name',     default: false },
-    { key: 'father_contact',         label: 'Father Contact',  default: false },
-    { key: 'father_aadhar',          label: 'Father Aadhar',   default: false },
-    { key: 'mother_name',            label: 'Mother Name',     default: false },
-    { key: 'mother_contact',         label: 'Mother Contact',  default: false },
-    { key: 'address',                label: 'Address',         default: false },
-    { key: 'caste',                  label: 'Caste',           default: false },
-    { key: 'previous_school_details',label: 'Previous School', default: false },
+    { key: 'roll_no', label: 'Roll No', default: true },
+    { key: 'name', label: 'Name', default: true },
+    { key: 'class', label: 'Class', default: true },
+    { key: 'section', label: 'Section', default: true },
+    { key: 'phone', label: 'Phone', default: true },
+    { key: 'gender', label: 'Gender', default: true },
+    { key: 'dob', label: 'Date of Birth', default: false },
+    { key: 'aadhar_no', label: 'Aadhar No', default: false },
+    { key: 'epunjab_id', label: 'ePunjab ID', default: false },
+    { key: 'father_name', label: 'Father Name', default: false },
+    { key: 'father_contact', label: 'Father Contact', default: false },
+    { key: 'father_aadhar', label: 'Father Aadhar', default: false },
+    { key: 'mother_name', label: 'Mother Name', default: false },
+    { key: 'mother_contact', label: 'Mother Contact', default: false },
+    { key: 'address', label: 'Address', default: false },
+    { key: 'caste', label: 'Caste', default: false },
+    { key: 'previous_school_details', label: 'Previous School', default: false },
 ]
 
 function openFieldPicker() {
@@ -243,6 +228,22 @@ function confirmDownload() {
     exitSelectionMode()
 }
 
+// ── Fee Badge ─────────────────────────────────────────────────
+
+function getFeeBadge(studentId) {
+    const fee = feeStatusMap[studentId]
+    if (!fee) {
+        return `<span class="fee-badge-sm unpaid"
+            onclick="event.stopPropagation(); window.location.href='fee-collect.html?student_id=${studentId}&month=${currentMonth}&year=${currentYear}'">
+            Unpaid
+        </span>`
+    }
+    return `<span class="fee-badge-sm ${fee.status}"
+        onclick="event.stopPropagation(); window.location.href='fees.html'">
+        ${fee.status === 'paid' ? `₹${fee.total_paid.toLocaleString()}` : fee.status}
+    </span>`
+}
+
 // ── Render ───────────────────────────────────────────────────
 
 function renderStudents() {
@@ -254,13 +255,11 @@ function renderStudents() {
     }
 
     list.innerHTML = allStudents.map(s => `
-        <div class="student-row ${selectedRolls.has(s.roll_no) ? 'selected' : ''}"
-             id="row-${s.roll_no}">
+        <div class="student-row ${selectedRolls.has(s.roll_no) ? 'selected' : ''}" id="row-${s.roll_no}">
 
             <div class="checkbox-wrap ${selectionMode ? 'visible' : ''}">
                 <label class="custom-checkbox">
-                    <input type="checkbox"
-                           id="cb-${s.roll_no}"
+                    <input type="checkbox" id="cb-${s.roll_no}"
                            ${selectedRolls.has(s.roll_no) ? 'checked' : ''}
                            onchange="toggleSelect('${s.roll_no}')">
                     <span class="checkmark"></span>
@@ -273,6 +272,8 @@ function renderStudents() {
                 <div class="student-name">${s.name || '—'}</div>
                 <div class="student-meta">${s.gender || ''} ${s.dob ? '· ' + s.dob : ''}</div>
             </div>
+
+            ${!selectionMode ? getFeeBadge(s.ID) : ''}
 
             <a class="student-phone" href="tel:${s.phone}" onclick="event.stopPropagation()">
                 ${s.phone || '—'}
@@ -294,6 +295,24 @@ function renderStudents() {
 
 // ── Load ─────────────────────────────────────────────────────
 
+async function loadFeeStatus() {
+    try {
+        const res = await fetch(`${API}/fees/class/${classId}/month/${currentMonth}/year/${currentYear}`)
+        const data = await res.json()
+        feeStatusMap = {}
+        if (data) {
+            data.forEach(s => {
+                feeStatusMap[s.student_id] = {
+                    status: s.has_paid ? (s.fees?.[0]?.status || 'paid') : 'unpaid',
+                    total_paid: s.total_paid || 0
+                }
+            })
+        }
+    } catch (e) {
+        console.log('fee status load failed', e)
+    }
+}
+
 async function loadClassInfo() {
     const res = await fetch(`${API}/classes`)
     const classes = await res.json()
@@ -304,9 +323,11 @@ async function loadClassInfo() {
         <div class="cs-class">Class ${cls.class} — ${cls.section || '—'}</div>
         <div class="cs-divider">|</div>
         <div class="cs-teacher">
-            👤 ${cls.teacher_name || 'No teacher'} 
+            👤 ${cls.teacher_name || 'No teacher'}
             ${cls.teacher_contact ? `· <a href="tel:${cls.teacher_contact}">${cls.teacher_contact}</a>` : ''}
         </div>
+        <div class="cs-divider">|</div>
+        <div class="cs-fees">📚 ₹${cls.tuition_fee?.toLocaleString() || '—'}/mo</div>
     `
 }
 
@@ -316,12 +337,10 @@ async function loadStudents() {
     allStudents = students || []
 
     const subtitle = document.getElementById('pageSubtitle')
-    if (subtitle) subtitle.textContent = `${allStudents.length} student${allStudents.length !== 1 ? 's' : ''} in this class`
+    if (subtitle) subtitle.textContent =
+        `${allStudents.length} student${allStudents.length !== 1 ? 's' : ''} · ${currentMonth} ${currentYear}`
 
-    // update count in summary bar too
-    const countEl = document.getElementById('csCount')
-    if (countEl) countEl.textContent = `${allStudents.length} Students`
-
+    await loadFeeStatus()
     renderStudents()
 }
 
