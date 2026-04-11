@@ -10,7 +10,7 @@ func GetStudents(c *fiber.Ctx) error {
 	class := c.Params("class")
 
 	var students []models.Student
-	result := database.DB.Where("class = ?", class).Find(&students)
+	result := database.DB.Where("class = ?", class).Order("roll_no asc").Find(&students)
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": result.Error.Error()})
 	}

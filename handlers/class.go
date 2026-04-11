@@ -12,6 +12,7 @@ func GetClasses(c *fiber.Ctx) error {
 	if result.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": result.Error.Error()})
 	}
+	database.DB.Order("class asc").Find(&classes)
 	return c.JSON(classes)
 }
 

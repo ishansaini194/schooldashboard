@@ -23,6 +23,7 @@ func PayFee(c *fiber.Ctx) error {
 		StudentID      uint   `json:"student_id"`
 		EpunjabID      string `json:"epunjab_id"`
 		StudentName    string `json:"student_name"`
+		RollNo         string `json:"roll_no"` // add this
 		Class          string `json:"class"`
 		Month          string `json:"month"`
 		Year           int    `json:"year"`
@@ -36,6 +37,13 @@ func PayFee(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	// validate first
+	if body.PaidAmount <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "paid amount must be greater than 0",
+		})
 	}
 
 	finalAmount := body.BaseAmount - body.Discount
@@ -52,6 +60,7 @@ func PayFee(c *fiber.Ctx) error {
 		StudentID:      body.StudentID,
 		EpunjabID:      body.EpunjabID,
 		StudentName:    body.StudentName,
+		RollNo:         body.RollNo, // add this
 		Class:          body.Class,
 		Month:          body.Month,
 		Year:           body.Year,
@@ -97,15 +106,12 @@ func GetClassFeeStatus(c *fiber.Ctx) error {
 	month := c.Params("month")
 	year := c.Params("year")
 
-	// get all students in class
 	var students []models.Student
-	database.DB.Where("class = ?", class).Find(&students)
+	database.DB.Where("class = ?", class).Order("CAST(roll_no AS INTEGER) asc").Find(&students)
 
-	// get all fees for this class/month/year
 	var fees []models.Fee
 	database.DB.Where("class = ? AND month = ? AND year = ?", class, month, year).Find(&fees)
 
-	// map fees by student_id
 	feeMap := map[uint][]models.Fee{}
 	for _, f := range fees {
 		feeMap[f.StudentID] = append(feeMap[f.StudentID], f)
@@ -124,16 +130,22 @@ func GetClassFeeStatus(c *fiber.Ctx) error {
 	for _, s := range students {
 		studentFees := feeMap[s.ID]
 		totalPaid := 0
+		hasPaid := false
+
 		for _, f := range studentFees {
 			totalPaid += f.PaidAmount
+			if f.Status == "paid" {
+				hasPaid = true
+			}
 		}
+
 		result = append(result, StudentFeeStatus{
 			StudentID:   s.ID,
 			StudentName: s.Name,
 			RollNo:      s.RollNo,
 			Fees:        studentFees,
 			TotalPaid:   totalPaid,
-			HasPaid:     len(studentFees) > 0,
+			HasPaid:     hasPaid,
 		})
 	}
 
