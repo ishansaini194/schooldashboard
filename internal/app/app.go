@@ -42,5 +42,11 @@ func New() *server.Server {
 	api.Get("/fees/pending/:class/:month/:year", handlers.GetPendingFees)
 	api.Get("/fees/receipt/:receipt_no", handlers.GetReceipt)
 
+	// dashboard routes
+	api.Get("/dashboard/summary", handlers.GetDashboardSummary)
+	api.Get("/fees/recent", handlers.GetRecentPayments)
+	api.Get("/fees/overdue", handlers.GetOverdueFees)
+	api.Get("/fees/pending/all", handlers.GetAllPendingFees)
+
 	return srv
 }
