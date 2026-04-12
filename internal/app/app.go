@@ -5,6 +5,7 @@ import (
 	"github.com/ishansaini194/dashboard/database"
 	"github.com/ishansaini194/dashboard/handlers"
 	"github.com/ishansaini194/dashboard/internal/server"
+	"github.com/ishansaini194/dashboard/middleware"
 )
 
 func New() *server.Server {
@@ -13,42 +14,49 @@ func New() *server.Server {
 
 	srv := server.New()
 
-	srv.App.Use(cors.New((cors.Config{
+	srv.App.Use(cors.New(cors.Config{
 		AllowOrigins: "http://localhost:3000, http://127.0.0.1:3000",
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 		AllowMethods: "GET, POST, PUT, DELETE",
-	})))
+	}))
 
 	api := srv.App.Group("/api")
 
+	// ── Public routes (no auth) ──
+	api.Post("/auth/register", handlers.Register)
+	api.Post("/auth/login", handlers.Login)
+
+	// ── Protected routes (auth required) ──
+	protected := api.Group("/", middleware.AuthRequired())
+
 	// Student routes
-	api.Get("/students/class/:class", handlers.GetStudents)
-	api.Get("/students/:roll_no", handlers.GetStudent)
-	api.Post("/students", handlers.CreateStudent)
-	api.Put("/students/:roll_no", handlers.UpdateStudent)
-	api.Delete("/students/:roll_no", handlers.DeleteStudent)
+	protected.Get("/students/class/:class", handlers.GetStudents)
+	protected.Get("/students/:roll_no", handlers.GetStudent)
+	protected.Post("/students", handlers.CreateStudent)
+	protected.Put("/students/:roll_no", handlers.UpdateStudent)
+	protected.Delete("/students/:roll_no", handlers.DeleteStudent)
 
 	// Class routes
-	api.Get("/classes", handlers.GetClasses)
-	api.Get("/classes/:id", handlers.GetClass)
-	api.Post("/classes", handlers.CreateClass)
-	api.Put("/classes/:id", handlers.UpdateClass)
-	api.Delete("/classes/:id", handlers.DeleteClass)
+	protected.Get("/classes", handlers.GetClasses)
+	protected.Get("/classes/:id", handlers.GetClass)
+	protected.Post("/classes", handlers.CreateClass)
+	protected.Put("/classes/:id", handlers.UpdateClass)
+	protected.Delete("/classes/:id", handlers.DeleteClass)
 
-	// fee routes
-	api.Post("/fees/pay", handlers.PayFee)
-	api.Get("/fees/student/:student_id", handlers.GetStudentFees)
-	api.Get("/fees/class/:class/month/:month/year/:year", handlers.GetClassFeeStatus)
-	api.Get("/fees/pending/:class/:month/:year", handlers.GetPendingFees)
-	api.Get("/fees/receipt/:receipt_no", handlers.GetReceipt)
-	api.Get("/fees/student/:student_id/yearly", handlers.GetStudentYearlySummary)
-	api.Put("/fees/:id/complete", handlers.CompleteFee)
+	// Fee routes
+	protected.Post("/fees/pay", handlers.PayFee)
+	protected.Get("/fees/student/:student_id", handlers.GetStudentFees)
+	protected.Get("/fees/student/:student_id/yearly", handlers.GetStudentYearlySummary)
+	protected.Get("/fees/class/:class/month/:month/year/:year", handlers.GetClassFeeStatus)
+	protected.Get("/fees/pending/:class/:month/:year", handlers.GetPendingFees)
+	protected.Get("/fees/pending/all", handlers.GetAllPendingFees)
+	protected.Get("/fees/receipt/:receipt_no", handlers.GetReceipt)
+	protected.Get("/fees/recent", handlers.GetRecentPayments)
+	protected.Get("/fees/overdue", handlers.GetOverdueFees)
+	protected.Put("/fees/:id/complete", handlers.CompleteFee)
 
-	// dashboard routes
-	api.Get("/dashboard/summary", handlers.GetDashboardSummary)
-	api.Get("/fees/recent", handlers.GetRecentPayments)
-	api.Get("/fees/overdue", handlers.GetOverdueFees)
-	api.Get("/fees/pending/all", handlers.GetAllPendingFees)
+	// Dashboard routes
+	protected.Get("/dashboard/summary", handlers.GetDashboardSummary)
 
 	return srv
 }
