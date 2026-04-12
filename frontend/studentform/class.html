@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classes</title>
+    <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="class.css">
+</head>
+<body>
+
+    <div class="page">
+        <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+                <h1>Classes</h1>
+                <p>Manage all classes and their teachers</p>
+            </div>
+            <button class="btn-primary" onclick="openModal()">+ Add Class</button>
+        </div>
+
+        <div id="classGrid" class="class-grid">
+            <div class="empty-state">Loading classes...</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Class</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <form id="classForm">
+                <input type="hidden" id="classId">
+
+                <div class="form-section">
+                    <div class="section-title">Class Info</div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Class No</label>
+                            <input type="number" id="classNo" placeholder="e.g. 6" required>
+                        </div>
+                        <div class="field">
+                            <label>Section</label>
+                            <input type="text" id="section" placeholder="e.g. A">
+                        </div>
+                        <div class="field">
+                            <label>Teacher Name</label>
+                            <input type="text" id="teacherName" placeholder="Full name">
+                        </div>
+                        <div class="field">
+                            <label>Teacher Contact</label>
+                            <input type="text" id="teacherContact" placeholder="Phone number">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Fee Structure (₹/month)</div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Tuition Fee (₹)</label>
+                            <input type="number" id="tuitionFee" placeholder="e.g. 2000" min="0">
+                        </div>
+                        <div class="field">
+                            <label>Transport Fee (₹)</label>
+                            <input type="number" id="transportFee" placeholder="e.g. 500 or 0" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../menu.js"></script>
+    <script src="class.js"></script>
+</body>
+</html>
