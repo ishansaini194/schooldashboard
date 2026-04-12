@@ -205,3 +205,115 @@ func GetReceipt(c *fiber.Ctx) error {
 
 	return c.JSON(fee)
 }
+
+// GET /api/fees/student/:student_id/yearly?year=2026
+func GetStudentYearlySummary(c *fiber.Ctx) error {
+	studentID := c.Params("student_id")
+	year := c.Query("year", fmt.Sprintf("%d", time.Now().Year()))
+
+	// get all fees for this student this year
+	var fees []models.Fee
+	database.DB.Where("student_id = ? AND year = ?", studentID, year).Find(&fees)
+
+	// map by month
+	feeByMonth := map[string]models.Fee{}
+	for _, f := range fees {
+		feeByMonth[f.Month] = f
+	}
+
+	// only show months up to current month
+	allMonths := []string{
+		"January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December",
+	}
+	currentMonth := int(time.Now().Month())
+
+	type MonthSummary struct {
+		Month      string `json:"month"`
+		HasRecord  bool   `json:"has_record"`
+		Status     string `json:"status"`
+		PaidAmount int    `json:"paid_amount"`
+		Remaining  int    `json:"remaining"`
+		FeeType    string `json:"fee_type"`
+		ReceiptNo  string `json:"receipt_no"`
+		DueDate    string `json:"due_date"`
+	}
+
+	var summary []MonthSummary
+	paidCount := 0
+
+	for i, month := range allMonths {
+		if i+1 > currentMonth {
+			break // don't show future months
+		}
+		if f, exists := feeByMonth[month]; exists {
+			if f.Status == "paid" {
+				paidCount++
+			}
+			summary = append(summary, MonthSummary{
+				Month:      month,
+				HasRecord:  true,
+				Status:     f.Status,
+				PaidAmount: f.PaidAmount,
+				Remaining:  f.Remaining,
+				FeeType:    f.FeeType,
+				ReceiptNo:  f.ReceiptNo,
+				DueDate:    f.DueDate,
+			})
+		} else {
+			summary = append(summary, MonthSummary{
+				Month:     month,
+				HasRecord: false,
+				Status:    "unpaid",
+			})
+		}
+	}
+
+	return c.JSON(fiber.Map{
+		"student_id":   studentID,
+		"year":         year,
+		"months":       summary,
+		"paid_count":   paidCount,
+		"total_months": len(summary),
+	})
+}
+
+// PUT /api/fees/:id/complete
+func CompleteFee(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var body struct {
+		PaidAmount int    `json:"paid_amount"`
+		DueDate    string `json:"due_date"`
+	}
+
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var fee models.Fee
+	result := database.DB.First(&fee, id)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "fee not found"})
+	}
+
+	if fee.Status == "paid" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "fee already fully paid"})
+	}
+
+	fee.PaidAmount += body.PaidAmount
+	fee.Remaining = fee.FinalAmount - fee.PaidAmount
+
+	if fee.PaidAmount >= fee.FinalAmount {
+		fee.Status = "paid"
+		fee.Remaining = 0
+	} else {
+		fee.Status = "partial"
+		fee.DueDate = body.DueDate
+	}
+
+	fee.PaidAt = time.Now().Format("2006-01-02 15:04:05")
+	database.DB.Save(&fee)
+
+	return c.JSON(fee)
+}

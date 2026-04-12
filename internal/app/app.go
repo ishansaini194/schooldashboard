@@ -41,6 +41,8 @@ func New() *server.Server {
 	api.Get("/fees/class/:class/month/:month/year/:year", handlers.GetClassFeeStatus)
 	api.Get("/fees/pending/:class/:month/:year", handlers.GetPendingFees)
 	api.Get("/fees/receipt/:receipt_no", handlers.GetReceipt)
+	api.Get("/fees/student/:student_id/yearly", handlers.GetStudentYearlySummary)
+	api.Put("/fees/:id/complete", handlers.CompleteFee)
 
 	// dashboard routes
 	api.Get("/dashboard/summary", handlers.GetDashboardSummary)

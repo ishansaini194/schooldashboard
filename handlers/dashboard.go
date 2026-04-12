@@ -38,20 +38,37 @@ func GetDashboardSummary(c *fiber.Ctx) error {
 		}
 	}
 
-	// pending = total students - fully paid
 	pendingCount := int(studentCount) - len(paidStudentIDs)
 
-	// overdue = partial with past due date
+	// overdue count
 	today := time.Now().Format("2006-01-02")
 	var overdueCount int64
 	database.DB.Model(&models.Fee{}).
 		Where("status = ? AND due_date != '' AND due_date < ?", "partial", today).
 		Count(&overdueCount)
 
+	// expected total — 2 queries only
+	var students []models.Student
+	database.DB.Find(&students)
+
+	var classes []models.Class
+	database.DB.Find(&classes)
+
+	classMap := map[string]int{}
+	for _, cls := range classes {
+		classMap[fmt.Sprintf("%d", cls.Class)] = cls.TuitionFee
+	}
+
+	expectedTotal := 0
+	for _, s := range students {
+		expectedTotal += classMap[s.Class]
+	}
+
 	return c.JSON(fiber.Map{
 		"total_students":  studentCount,
 		"total_classes":   classCount,
 		"total_collected": totalCollected,
+		"expected_total":  expectedTotal,
 		"pending_count":   pendingCount,
 		"overdue_count":   overdueCount,
 		"month":           month,
