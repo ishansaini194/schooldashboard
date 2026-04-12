@@ -26,11 +26,18 @@
             </div>
         </div>
 
-        <!-- Alert Banner -->
+        <!-- Quick Search -->
+        <div class="quick-search-wrap">
+            <input type="text" id="quickSearch" placeholder="🔍  Search student by name, roll no or ePunjab ID..."
+                   oninput="quickSearch()" autocomplete="off">
+            <div id="quickSearchResults" class="quick-search-results hidden"></div>
+        </div>
+
+        <!-- Overdue Alert Banner -->
         <div class="alert-banner hidden" id="alertBanner">
             <span class="alert-icon">⚠</span>
             <span id="alertText">—</span>
-            <button class="alert-link" onclick="window.location.href='fees.html'">View →</button>
+            <button class="alert-link" onclick="window.location.href='fees.html?tab=pending'">View →</button>
         </div>
 
         <!-- Stat Cards -->
@@ -50,10 +57,30 @@
                 <div class="stat-value" id="statCollected">—</div>
                 <div class="stat-label">Collected</div>
             </div>
-            <div class="stat-card warning" onclick="window.location.href='fees.html'" style="cursor:pointer">
+            <div class="stat-card warning" onclick="window.location.href='fees.html?tab=pending'" style="cursor:pointer">
                 <div class="stat-icon">!</div>
                 <div class="stat-value" id="statPending">—</div>
                 <div class="stat-label">Pending</div>
+            </div>
+        </div>
+
+        <!-- Collection Progress Bar -->
+        <div class="collection-progress-card" id="collectionProgress">
+            <div class="cp-header">
+                <div class="cp-label">Fee Collection Progress</div>
+                <div class="cp-amounts">
+                    <span class="cp-collected" id="cpCollected">₹0</span>
+                    <span class="cp-sep">of</span>
+                    <span class="cp-expected" id="cpExpected">₹0</span>
+                    <span class="cp-sep">expected</span>
+                </div>
+            </div>
+            <div class="cp-bar-wrap">
+                <div class="cp-bar" id="cpBar" style="width:0%"></div>
+            </div>
+            <div class="cp-footer">
+                <span class="cp-pct" id="cpPct">0%</span>
+                <span class="cp-remaining" id="cpRemaining">—</span>
             </div>
         </div>
 
@@ -101,7 +128,7 @@
             <div class="dash-loading">Loading...</div>
         </div>
         <div class="pending-footer">
-            <button class="view-all-btn" onclick="window.location.href='fees.html'">View All in Fee Manager →</button>
+            <button class="view-all-btn" onclick="window.location.href='fees.html?tab=pending'">View All in Fee Manager →</button>
         </div>
 
         <!-- Recent Payments -->
@@ -114,13 +141,10 @@
 
     </div>
 
-    <!-- PDF Print area (hidden) -->
     <div id="pdfPrintArea" class="pdf-print-area no-print"></div>
-
     <div class="toast" id="toast"></div>
 
     <script src="../menu.js"></script>
     <script src="dashboard.js"></script>
 </body>
-
 </html>
