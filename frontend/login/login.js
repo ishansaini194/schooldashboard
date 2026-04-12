@@ -11,24 +11,36 @@ roles.forEach(btn => {
 })
 
 // Form submit
-document.getElementById("loginForm").addEventListener("submit", async function (e) {
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
     e.preventDefault()
 
-    const formData = new FormData(this)
     const data = {
-        username: formData.get("username"),
-        password: formData.get("password"),
+        username: document.querySelector('input[name="username"]').value,
+        password: document.querySelector('input[name="password"]').value,
         role: selectedRole
     }
 
-    console.log("Login Data:", data)
-
-    // Example API call (you'll connect later)
-    /*
-    const res = await fetch("http://localhost:8080/api/login", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
+    const res = await fetch('http://localhost:8080/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
     })
-    */
+
+    if (res.ok) {
+        const result = await res.json()
+        localStorage.setItem('token', result.token)
+        localStorage.setItem('username', result.username)
+        localStorage.setItem('role', result.role)
+
+        if (result.role === 'admin') {
+            window.location.href = '../studentform/dashboard.html'
+        } else if (result.role === 'teacher') {
+            window.location.href = '../studentform/dashboard.html'
+        } else if (result.role === 'student') {
+            window.location.href = '../studentform/dashboard.html'
+        }
+    } else {
+        const err = await res.json()
+        alert(err.error)
+    }
 })

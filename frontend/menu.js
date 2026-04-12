@@ -1,6 +1,7 @@
 // ── Persistent Sidebar ───────────────────────────────────────
 // Desktop: always open, toggle to collapse
 // Mobile:  always hidden, toggle to open
+requireAuth()
 
 document.body.insertAdjacentHTML('afterbegin', `
     <button id="menuBtn" title="Toggle menu">☰</button>
@@ -21,6 +22,9 @@ document.body.insertAdjacentHTML('afterbegin', `
             </li>
             <li onclick="window.location.href='fees.html'">
                 <span class="icon">₹</span> Fees
+            </li>
+            <li onclick="logout()" style="margin-top:auto; color: rgba(255,255,255,0.5);">
+                <span class="icon">↩</span> Logout
             </li>
         </ul>
     </div>
