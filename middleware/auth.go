@@ -45,3 +45,26 @@ func AuthRequired() fiber.Handler {
 		return c.Next()
 	}
 }
+
+func GetRole(c *fiber.Ctx) string {
+	authHeader := c.Get("Authorization")
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 {
+		return ""
+	}
+
+	token, err := jwt.Parse(parts[1], func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fiber.ErrUnauthorized
+		}
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+
+	if err != nil || !token.Valid {
+		return ""
+	}
+
+	claims := token.Claims.(jwt.MapClaims)
+	role, _ := claims["role"].(string)
+	return role
+}

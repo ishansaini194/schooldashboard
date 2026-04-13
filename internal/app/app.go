@@ -22,40 +22,73 @@ func New() *server.Server {
 
 	api := srv.App.Group("/api")
 
-	// ── Public routes (no auth) ──
+	// ── Public ──
 	api.Post("/auth/register", handlers.Register)
 	api.Post("/auth/login", handlers.Login)
 
-	// ── Protected routes (auth required) ──
+	// ── Protected ──
 	protected := api.Group("/", middleware.AuthRequired())
 
-	// Student routes
-	protected.Get("/students/class/:class", handlers.GetStudents)
-	protected.Get("/students/:roll_no", handlers.GetStudent)
+	// Auth
+	protected.Put("/auth/change-password", handlers.ChangePassword)
+	protected.Put("/auth/reset-password/:user_id", handlers.ResetPassword)
+
+	// Students
 	protected.Post("/students", handlers.CreateStudent)
 	protected.Put("/students/:roll_no", handlers.UpdateStudent)
 	protected.Delete("/students/:roll_no", handlers.DeleteStudent)
+	protected.Get("/students/epunjab/:epunjab_id", handlers.GetStudentByEpunjabID)
+	protected.Get("/students/class/:class", handlers.GetStudents)
+	protected.Get("/students/:roll_no", handlers.GetStudent)
 
-	// Class routes
-	protected.Get("/classes", handlers.GetClasses)
-	protected.Get("/classes/:id", handlers.GetClass)
+	// Classes
 	protected.Post("/classes", handlers.CreateClass)
 	protected.Put("/classes/:id", handlers.UpdateClass)
 	protected.Delete("/classes/:id", handlers.DeleteClass)
+	protected.Get("/classes", handlers.GetClasses)
+	protected.Get("/classes/:id", handlers.GetClass)
 
-	// Fee routes
+	// Fees
 	protected.Post("/fees/pay", handlers.PayFee)
-	protected.Get("/fees/student/:student_id", handlers.GetStudentFees)
-	protected.Get("/fees/student/:student_id/yearly", handlers.GetStudentYearlySummary)
+	protected.Put("/fees/:id/complete", handlers.CompleteFee)
 	protected.Get("/fees/class/:class/month/:month/year/:year", handlers.GetClassFeeStatus)
 	protected.Get("/fees/pending/:class/:month/:year", handlers.GetPendingFees)
 	protected.Get("/fees/pending/all", handlers.GetAllPendingFees)
-	protected.Get("/fees/receipt/:receipt_no", handlers.GetReceipt)
 	protected.Get("/fees/recent", handlers.GetRecentPayments)
 	protected.Get("/fees/overdue", handlers.GetOverdueFees)
-	protected.Put("/fees/:id/complete", handlers.CompleteFee)
+	protected.Get("/fees/student/:student_id", handlers.GetStudentFees)
+	protected.Get("/fees/student/:student_id/yearly", handlers.GetStudentYearlySummary)
+	protected.Get("/fees/receipt/:receipt_no", handlers.GetReceipt)
 
-	// Dashboard routes
+	// Results
+	protected.Post("/results", handlers.CreateResult)
+	protected.Put("/results/:id", handlers.UpdateResult)
+	protected.Delete("/results/:id", handlers.DeleteResult)
+	protected.Get("/results/student/:student_id", handlers.GetStudentResults)
+	protected.Get("/results/class/:class/section/:section", handlers.GetClassResults)
+
+	// Homework
+	protected.Post("/homework", handlers.CreateHomework)
+	protected.Put("/homework/:id", handlers.UpdateHomework)
+	protected.Delete("/homework/:id", handlers.DeleteHomework)
+	protected.Get("/homework/class/:class/section/:section", handlers.GetHomework)
+	protected.Get("/homework/:id", handlers.GetHomeworkByID)
+
+	// Notices
+	protected.Post("/notices", handlers.CreateNotice)
+	protected.Put("/notices/:id", handlers.UpdateNotice)
+	protected.Delete("/notices/:id", handlers.DeleteNotice)
+	protected.Get("/notices", handlers.GetNotices)
+	protected.Get("/notices/:id", handlers.GetNoticeByID)
+
+	// Papers
+	protected.Post("/papers", handlers.CreatePaper)
+	protected.Put("/papers/:id", handlers.UpdatePaper)
+	protected.Delete("/papers/:id", handlers.DeletePaper)
+	protected.Get("/papers", handlers.GetPapers)
+	protected.Get("/papers/:id", handlers.GetPaperByID)
+
+	// Dashboard
 	protected.Get("/dashboard/summary", handlers.GetDashboardSummary)
 
 	return srv

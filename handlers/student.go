@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/ishansaini194/dashboard/database"
+	"github.com/ishansaini194/dashboard/middleware"
 	"github.com/ishansaini194/dashboard/models"
 )
 
@@ -69,6 +70,10 @@ func UpdateStudent(c *fiber.Ctx) error {
 }
 
 func DeleteStudent(c *fiber.Ctx) error {
+	if middleware.GetRole(c) != "admin" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "admin only"})
+	}
+
 	rollNo := c.Params("roll_no")
 
 	result := database.DB.Where("roll_no = ?", rollNo).Delete(&models.Student{})
@@ -77,4 +82,17 @@ func DeleteStudent(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"message": "student deleted"})
+}
+
+// GET /api/students/epunjab/:epunjab_id
+func GetStudentByEpunjabID(c *fiber.Ctx) error {
+	epunjabID := c.Params("epunjab_id")
+
+	var s models.Student
+	result := database.DB.Where("epunjab_id = ?", epunjabID).First(&s)
+	if result.Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "student not found"})
+	}
+
+	return c.JSON(s)
 }

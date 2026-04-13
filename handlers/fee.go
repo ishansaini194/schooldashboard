@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/ishansaini194/dashboard/database"
+	"github.com/ishansaini194/dashboard/middleware"
 	"github.com/ishansaini194/dashboard/models"
 )
 
@@ -19,6 +20,10 @@ func generateReceiptNo() string {
 
 // POST /api/fees/pay
 func PayFee(c *fiber.Ctx) error {
+	if middleware.GetRole(c) != "admin" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "admin only"})
+	}
+
 	var body struct {
 		StudentID      uint   `json:"student_id"`
 		EpunjabID      string `json:"epunjab_id"`
@@ -280,6 +285,10 @@ func GetStudentYearlySummary(c *fiber.Ctx) error {
 
 // PUT /api/fees/:id/complete
 func CompleteFee(c *fiber.Ctx) error {
+	if middleware.GetRole(c) != "admin" {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "admin only"})
+	}
+
 	id := c.Params("id")
 
 	var body struct {
