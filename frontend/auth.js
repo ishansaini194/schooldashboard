@@ -1,4 +1,3 @@
-// frontend/auth.js
 function getToken() {
     return localStorage.getItem('token')
 }
@@ -6,28 +5,31 @@ function getToken() {
 function logout() {
     localStorage.removeItem('token')
     localStorage.removeItem('username')
-    window.location.href = '../login/login.html'
+    localStorage.removeItem('role')
+    localStorage.removeItem('student_id')
+    localStorage.removeItem('epunjab_id')
+    localStorage.removeItem('student_class')
+    localStorage.removeItem('student_section')
+    window.location.href = '/frontend/login/login.html'
 }
 
-// redirect to login if no token
 function requireAuth() {
     if (!getToken()) {
-        window.location.href = '../login/login.html'
+        window.location.href = '/frontend/login/login.html'
     }
 }
 
 function requireRole(role) {
     const userRole = localStorage.getItem('role')
     if (!getToken()) {
-        window.location.href = '../login/login.html'
+        window.location.href = '/frontend/login/login.html'
         return
     }
     if (userRole !== role) {
-        window.location.href = '../login/login.html'
+        window.location.href = '/frontend/login/login.html'
     }
 }
 
-// add token to all fetch calls
 async function authFetch(url, options = {}) {
     const token = getToken()
     const headers = {
@@ -38,7 +40,6 @@ async function authFetch(url, options = {}) {
 
     const res = await fetch(url, { ...options, headers })
 
-    // if 401 — token expired, redirect to login
     if (res.status === 401) {
         logout()
         return
