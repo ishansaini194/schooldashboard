@@ -1,6 +1,4 @@
 // ── Persistent Sidebar ───────────────────────────────────────
-// Desktop: always open, toggle to collapse
-// Mobile:  always hidden, toggle to open
 requireAuth()
 
 document.body.insertAdjacentHTML('afterbegin', `
@@ -23,7 +21,19 @@ document.body.insertAdjacentHTML('afterbegin', `
             <li onclick="window.location.href='fees.html'">
                 <span class="icon">₹</span> Fees
             </li>
-            <li onclick="logout()" style="margin-top:auto; color: rgba(255,255,255,0.5);">
+            <li onclick="window.location.href='notices.html'">
+                <span class="icon">📢</span> Notices
+            </li>
+            <li onclick="window.location.href='results.html'">
+                <span class="icon">★</span> Results
+            </li>
+            <li onclick="window.location.href='papers.html'">
+                <span class="icon">◫</span> Papers
+            </li>
+            <li onclick="window.location.href='reset-password.html'">
+                <span class="icon">🔑</span> Reset Password
+            </li>
+            <li class="logout-item" onclick="logout()">
                 <span class="icon">↩</span> Logout
             </li>
         </ul>
@@ -34,24 +44,18 @@ document.body.insertAdjacentHTML('afterbegin', `
 const sidebar = document.getElementById('sidebar')
 const menuBtn = document.getElementById('menuBtn')
 const overlay = document.getElementById('overlay')
-const pages = document.querySelectorAll('.page')
 
 const isMobile = () => window.innerWidth <= 900
 
-// ── State ─────────────────────────────────────────────────────
-// persist sidebar state across pages
 let isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true'
 
 function applyState() {
     if (isMobile()) {
-        // mobile — use open/closed pattern
         sidebar.classList.remove('collapsed')
         menuBtn.classList.remove('sidebar-collapsed')
         document.querySelectorAll('.page').forEach(p => p.classList.remove('sidebar-collapsed'))
         return
     }
-
-    // desktop
     if (isCollapsed) {
         sidebar.classList.add('collapsed')
         sidebar.classList.remove('open')
@@ -66,41 +70,36 @@ function applyState() {
 
 function toggleSidebar() {
     if (isMobile()) {
-        // mobile toggle
         const isOpen = sidebar.classList.contains('open')
         sidebar.classList.toggle('open', !isOpen)
         overlay.classList.toggle('show', !isOpen)
     } else {
-        // desktop toggle collapse
         isCollapsed = !isCollapsed
         localStorage.setItem('sidebar_collapsed', isCollapsed)
         applyState()
     }
 }
 
-// ── Active page highlight ─────────────────────────────────────
 function setActivePage() {
     const path = window.location.pathname
     const links = sidebar.querySelectorAll('li')
-
     links.forEach(li => li.classList.remove('active'))
 
     if (path.includes('dashboard')) links[0]?.classList.add('active')
     else if (path.includes('class')) links[1]?.classList.add('active')
-    else if (path.includes('fee')) links[3]?.classList.add('active')
     else if (path.includes('form') || path.includes('student')) links[2]?.classList.add('active')
+    else if (path.includes('fee')) links[3]?.classList.add('active')
+    else if (path.includes('notices')) links[4]?.classList.add('active')
+    else if (path.includes('results')) links[5]?.classList.add('active')
+    else if (path.includes('papers')) links[6]?.classList.add('active')
+    else if (path.includes('reset-password')) links[7]?.classList.add('active')
 }
 
-// ── Events ────────────────────────────────────────────────────
 menuBtn.addEventListener('click', toggleSidebar)
-
 overlay.addEventListener('click', () => {
     sidebar.classList.remove('open')
     overlay.classList.remove('show')
 })
-
 window.addEventListener('resize', applyState)
-
-// ── Init ──────────────────────────────────────────────────────
 applyState()
 setActivePage()
