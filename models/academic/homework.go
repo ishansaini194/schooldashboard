@@ -3,11 +3,12 @@ package academic
 import (
 	"time"
 
+	"github.com/ishansaini194/dashboard/models"
 	"gorm.io/gorm"
 )
 
 type Homework struct {
-	gorm.Model
+	models.BaseModel
 	Class     string    `json:"class"`
 	Section   string    `json:"section"`
 	Subject   string    `json:"subject"`

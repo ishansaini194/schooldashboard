@@ -3,12 +3,13 @@ package models
 import "gorm.io/gorm"
 
 type Fee struct {
-	gorm.Model
+	BaseModel
 	StudentID      uint   `json:"student_id"`
 	RollNo         string `json:"roll_no"`
 	EpunjabID      string `json:"epunjab_id"`
 	StudentName    string `json:"student_name"`
 	Class          string `json:"class"`
+	Section        string `json:"section"`
 	Month          string `json:"month"`
 	Year           int    `json:"year"`
 	FeeType        string `json:"fee_type"` // "tuition" / "transport"

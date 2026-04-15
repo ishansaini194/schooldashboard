@@ -1,9 +1,12 @@
 package academic
 
-import "gorm.io/gorm"
+import (
+	"github.com/ishansaini194/dashboard/models"
+	"gorm.io/gorm"
+)
 
 type Paper struct {
-	gorm.Model
+	models.BaseModel
 	Class      string `json:"class"`
 	Section    string `json:"section"`
 	Subject    string `json:"subject"`

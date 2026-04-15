@@ -1,9 +1,12 @@
 package academic
 
-import "gorm.io/gorm"
+import (
+	"github.com/ishansaini194/dashboard/models"
+	"gorm.io/gorm"
+)
 
 type Notice struct {
-	gorm.Model
+	models.BaseModel
 	Title    string `json:"title"`
 	Body     string `json:"body"`
 	Target   string `json:"target"` // "all" or specific class like "8-A"

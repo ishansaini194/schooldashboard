@@ -1,9 +1,12 @@
 package academic
 
-import "gorm.io/gorm"
+import (
+	"github.com/ishansaini194/dashboard/models"
+	"gorm.io/gorm"
+)
 
 type Result struct {
-	gorm.Model
+	models.BaseModel
 	StudentID uint   `json:"student_id"`
 	Subject   string `json:"subject"`
 	ExamType  string `json:"exam_type"` // "midterm" or "final"

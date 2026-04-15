@@ -3,7 +3,7 @@ package models
 import "gorm.io/gorm"
 
 type Class struct {
-	gorm.Model
+	BaseModel
 	Class          int    `json:"class"`
 	Section        string `json:"section"`
 	TeacherName    string `json:"teacher_name"`
