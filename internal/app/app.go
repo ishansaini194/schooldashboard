@@ -88,6 +88,9 @@ func New() *server.Server {
 	protected.Get("/papers", handlers.GetPapers)
 	protected.Get("/papers/:id", handlers.GetPaperByID)
 
+	// reset password
+	protected.Get("/users/epunjab/:epunjab_id", handlers.GetUserByEpunjabID)
+
 	// Dashboard
 	protected.Get("/dashboard/summary", handlers.GetDashboardSummary)
 
