@@ -47,3 +47,16 @@ async function authFetch(url, options = {}) {
 
     return res
 }
+
+// ── HTML escape helper — use for ALL user-controlled content in innerHTML ──
+function escapeHtml(s) {
+    if (s === null || s === undefined) return ''
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+}
+// short alias
+const esc = escapeHtml

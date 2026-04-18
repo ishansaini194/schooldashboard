@@ -21,17 +21,8 @@ document.body.insertAdjacentHTML('afterbegin', `
             <li onclick="window.location.href='fees.html'">
                 <span class="icon">₹</span> Fees
             </li>
-            <li onclick="window.location.href='notices.html'">
-                <span class="icon">📢</span> Notices
-            </li>
-            <li onclick="window.location.href='results.html'">
-                <span class="icon">★</span> Results
-            </li>
-            <li onclick="window.location.href='papers.html'">
-                <span class="icon">◫</span> Papers
-            </li>
             <li onclick="window.location.href='reset-password.html'">
-                <span class="icon">🔑</span> Reset Password
+                <span class="icon">⚿</span> Reset Password
             </li>
             <li class="logout-item" onclick="logout()">
                 <span class="icon">↩</span> Logout
@@ -44,6 +35,7 @@ document.body.insertAdjacentHTML('afterbegin', `
 const sidebar = document.getElementById('sidebar')
 const menuBtn = document.getElementById('menuBtn')
 const overlay = document.getElementById('overlay')
+const pages = document.querySelectorAll('.page')
 
 const isMobile = () => window.innerWidth <= 900
 
@@ -89,10 +81,7 @@ function setActivePage() {
     else if (path.includes('class')) links[1]?.classList.add('active')
     else if (path.includes('form') || path.includes('student')) links[2]?.classList.add('active')
     else if (path.includes('fee')) links[3]?.classList.add('active')
-    else if (path.includes('notices')) links[4]?.classList.add('active')
-    else if (path.includes('results')) links[5]?.classList.add('active')
-    else if (path.includes('papers')) links[6]?.classList.add('active')
-    else if (path.includes('reset-password')) links[7]?.classList.add('active')
+    else if (path.includes('reset-password')) links[4]?.classList.add('active')
 }
 
 menuBtn.addEventListener('click', toggleSidebar)
