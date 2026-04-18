@@ -115,6 +115,34 @@ button[type="submit"]:hover {
     background: #333;
 }
 
+button[type="submit"]:disabled {
+    background: #888;
+    cursor: not-allowed;
+}
+
+.login-error {
+    background: #fff0f0;
+    border: 1px solid #f0b0b0;
+    color: #8a0000;
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    text-align: left;
+    display: none;
+    animation: shake 0.3s;
+}
+
+.login-error.show {
+    display: block;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
 /* Forgot */
 .forgot {
     margin-top: 15px;
