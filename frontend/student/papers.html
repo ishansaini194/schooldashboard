@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library — KRB School</title>
+    <link rel="stylesheet" href="../admin/form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="student.css">
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-header">
+            <h1>Library</h1>
+            <p>Past exam papers for practice</p>
+        </div>
+
+        <div class="filter-row">
+            <select id="filterClass" onchange="loadPapers()">
+                <option value="">All Classes</option>
+            </select>
+            <select id="filterSubject" onchange="loadPapers()">
+                <option value="">All Subjects</option>
+                <option>Math</option>
+                <option>Science</option>
+                <option>English</option>
+                <option>Hindi</option>
+                <option>Social Science</option>
+                <option>Punjabi</option>
+                <option>Computer</option>
+            </select>
+            <select id="filterExam" onchange="loadPapers()">
+                <option value="">All Types</option>
+                <option value="midterm">Mid-term</option>
+                <option value="final">Final</option>
+            </select>
+        </div>
+
+        <div id="paperList">
+            <div class="dash-loading">Loading...</div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script src="../config.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="student-menu.js"></script>
+    <script src="papers.js"></script>
+</body>
+
+</html>

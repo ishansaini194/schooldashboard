@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Status — KRB School</title>
+    <link rel="stylesheet" href="../admin/form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="student.css">
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-header">
+            <h1>Fee Status</h1>
+            <p id="yearLabel">—</p>
+        </div>
+
+        <div class="fee-summary-card" id="feeSummary">
+            <div class="fee-summary-item">
+                <div class="fee-summary-val" id="paidCount">—</div>
+                <div class="fee-summary-label">Months Paid</div>
+            </div>
+            <div class="fee-summary-divider"></div>
+            <div class="fee-summary-item">
+                <div class="fee-summary-val" id="totalMonths">—</div>
+                <div class="fee-summary-label">Total Months</div>
+            </div>
+        </div>
+
+        <div class="section-header" style="margin-bottom:12px;">
+            <div class="section-title">Month-wise Status</div>
+        </div>
+        <div id="feeGrid">
+            <div class="dash-loading">Loading...</div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script src="../config.js"></script> 
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="student-menu.js"></script>
+    <script src="fees.js"></script>
+</body>
+
+</html>
