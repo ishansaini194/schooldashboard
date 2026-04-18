@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard — KRB School</title>
+    <link rel="stylesheet" href="../admin/form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="../admin/dashboard.css">
+    <link rel="stylesheet" href="teacher.css">
+</head>
+
+<body>
+    <div class="page">
+        <div class="dash-header">
+            <div class="dash-header-left">
+                <div class="school-name">KRB School</div>
+                <div class="today-date" id="todayDate">—</div>
+            </div>
+        </div>
+
+        <div class="teacher-welcome-card">
+            <div class="teacher-avatar" id="teacherAvatar">T</div>
+            <div>
+                <div class="teacher-name" id="teacherName">—</div>
+                <div class="teacher-role">Teacher</div>
+            </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card" onclick="window.location.href='homework.html'" style="cursor:pointer">
+                <div class="stat-icon">✎</div>
+                <div class="stat-value" id="statHomework">—</div>
+                <div class="stat-label">Homework Today</div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='notices.html'" style="cursor:pointer">
+                <div class="stat-icon">📢</div>
+                <div class="stat-value" id="statNotices">—</div>
+                <div class="stat-label">Total Notices</div>
+            </div>
+            <div class="stat-card accent" onclick="window.location.href='results.html'" style="cursor:pointer">
+                <div class="stat-icon">★</div>
+                <div class="stat-value" id="statResults">—</div>
+                <div class="stat-label">Results Entered</div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='papers.html'" style="cursor:pointer">
+                <div class="stat-icon">◫</div>
+                <div class="stat-value" id="statPapers">—</div>
+                <div class="stat-label">Library Papers</div>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <div class="section-title">Quick Actions</div>
+        </div>
+        <div class="quick-actions">
+            <button class="action-btn primary" onclick="window.location.href='homework.html'">
+                <span class="action-icon">✎</span>
+                <span>Post Homework</span>
+            </button>
+            <button class="action-btn" onclick="window.location.href='notices.html'">
+                <span class="action-icon">📢</span>
+                <span>Post Notice</span>
+            </button>
+            <button class="action-btn" onclick="window.location.href='results.html'">
+                <span class="action-icon">★</span>
+                <span>Enter Marks</span>
+            </button>
+            <button class="action-btn" onclick="window.location.href='papers.html'">
+                <span class="action-icon">◫</span>
+                <span>Upload Paper</span>
+            </button>
+        </div>
+
+        <div class="section-header" style="margin-top:28px;">
+            <div class="section-title">Recent Homework</div>
+            <a href="homework.html" class="view-all-link">View all →</a>
+        </div>
+        <div id="recentHomework">
+            <div class="dash-loading">Loading...</div>
+        </div>
+
+        <div class="section-header" style="margin-top:28px;">
+            <div class="section-title">Recent Notices</div>
+            <a href="notices.html" class="view-all-link">View all →</a>
+        </div>
+        <div id="recentNotices">
+            <div class="dash-loading">Loading...</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="../config.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="teacher-menu.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

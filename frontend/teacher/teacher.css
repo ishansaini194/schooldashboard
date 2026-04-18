@@ -1,0 +1,347 @@
+/* ── Teacher Welcome Card ── */
+.teacher-welcome-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--accent);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.teacher-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.teacher-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+}
+
+.teacher-role {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 3px;
+}
+
+/* ── Info Cards ── */
+.info-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+}
+
+.info-card.notice {
+    border-left: 3px solid var(--accent);
+}
+
+.info-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.subject-badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.class-badge {
+    background: var(--bg);
+    color: var(--muted);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+}
+
+.notice-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.info-date {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.info-content {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.6;
+}
+
+.info-by {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+/* ── Section Header ── */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text);
+}
+
+.view-all-link {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+}
+
+/* ── Delete Button ── */
+.btn-delete {
+    background: none;
+    border: 1px solid #f0c8c8;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: #c0392b;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-delete:hover {
+    background: #fdf0f0;
+}
+
+/* ── Marks Entry ── */
+.marks-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+}
+
+.marks-student {
+    flex: 1;
+}
+
+.marks-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.marks-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.marks-input {
+    width: 90px !important;
+    text-align: center;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+}
+
+/* ── Papers ── */
+.paper-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+}
+
+.paper-info {
+    flex: 1;
+}
+
+.paper-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.paper-meta {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.download-btn {
+    padding: 8px 18px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.download-btn:hover {
+    background: #234a31;
+}
+
+/* ── Fee Progress ── */
+.fee-progress-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+}
+
+.fee-progress-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.cp-bar-wrap {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.cp-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Filter Row ── */
+.filter-row {
+    display: flex;
+    gap: 10px;
+}
+
+.filter-row select {
+    flex: 1;
+}
+
+/* ── Pending rows (reuse from dashboard) ── */
+.pending-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.pending-row.partial {
+    border-color: #f0d8a0;
+}
+
+.pending-row.unpaid {
+    border-color: #f0c8c8;
+}
+
+.pending-row.paid {
+    border-color: #c8dece;
+}
+
+.pending-class {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    min-width: 52px;
+}
+
+.pending-info {
+    flex: 1;
+}
+
+.pending-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.pending-right {
+    text-align: right;
+}
+
+.pending-amount {
+    font-size: 13px;
+    font-weight: 600;
+    color: #c07020;
+    margin-bottom: 3px;
+}
+
+.pending-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.pending-badge.partial {
+    background: #fef3e0;
+    color: #c07020;
+}
+
+.pending-badge.unpaid {
+    background: #fdf0f0;
+    color: #c0392b;
+}
+
+.pending-badge.paid {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+/* ── Loading / Empty ── */
+.dash-loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.dash-empty {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 14px;
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notices — KRB School</title>
+    <link rel="stylesheet" href="../admin/form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="teacher.css">
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-header">
+            <h1>Notices</h1>
+            <p>Post announcements to students</p>
+        </div>
+
+        <div class="form-card" style="margin-bottom:24px;">
+            <div class="form-section">
+                <div class="section-title">Post New Notice</div>
+                <div class="form-grid">
+                    <div class="field span2">
+                        <label>Title</label>
+                        <input type="text" id="noticeTitle" placeholder="e.g. Holiday on 14th April">
+                    </div>
+                    <div class="field span2">
+                        <label>Message</label>
+                        <textarea id="noticeBody" rows="3" placeholder="Full notice details..."></textarea>
+                    </div>
+                    <div class="field">
+                        <label>Target</label>
+                        <select id="noticeTarget">
+                            <option value="all">All Students</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="button" onclick="postNotice()">Post Notice</button>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <div class="section-title">All Notices</div>
+        </div>
+        <div id="noticeList">
+            <div class="dash-loading">Loading...</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="../config.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="teacher-menu.js"></script>
+    <script src="notices.js"></script>
+</body>
+
+</html>

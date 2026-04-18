@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results — KRB School</title>
+    <link rel="stylesheet" href="../admin/form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="teacher.css">
+</head>
+<body>
+    <div class="page">
+        <div class="page-header">
+            <h1>Enter Results</h1>
+            <p>Enter marks for mid-term or final exams</p>
+        </div>
+
+        <div class="form-card" style="margin-bottom:24px;">
+            <div class="form-section">
+                <div class="section-title">Select Class & Exam</div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Class</label>
+                        <select id="resClass" onchange="loadStudents()">
+                            <option value="">Select class</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Section</label>
+                        <select id="resSection" onchange="loadStudents()">
+                            <option value="">All</option>
+                            <option>A</option><option>B</option><option>C</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Subject</label>
+                        <select id="resSubject" onchange="loadStudents()">
+                            <option value="">Select subject</option>
+                            <option>Math</option>
+                            <option>Science</option>
+                            <option>English</option>
+                            <option>Hindi</option>
+                            <option>Social Science</option>
+                            <option>Punjabi</option>
+                            <option>Computer</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Exam Type</label>
+                        <select id="resExamType">
+                            <option value="midterm">Mid-term</option>
+                            <option value="final">Final</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Max Marks</label>
+                        <input type="number" id="resMaxMarks" value="100" min="1">
+                    </div>
+                    <div class="field">
+                        <label>Year</label>
+                        <input type="number" id="resYear" value="2026">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="studentMarksSection" style="display:none;">
+            <div class="section-header">
+                <div class="section-title">Enter Marks</div>
+                <button class="action-btn primary" style="padding:8px 20px;" onclick="saveAllMarks()">Save All</button>
+            </div>
+            <div id="marksList"><div class="dash-loading">Loading...</div></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="../config.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="teacher-menu.js"></script>
+    <script src="results.js"></script>
+</body>
+</html>

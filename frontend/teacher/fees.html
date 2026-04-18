@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Status — KRB School</title>
+    <link rel="stylesheet" href="../admin/form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="teacher.css">
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-header">
+            <h1>Fee Status</h1>
+            <p>View fee collection status by class</p>
+        </div>
+
+        <div class="filter-row" style="margin-bottom:20px;">
+            <select id="feeClass" onchange="loadFees()">
+                <option value="">Select class</option>
+            </select>
+            <select id="feeMonth" onchange="loadFees()">
+                <option>January</option>
+                <option>February</option>
+                <option>March</option>
+                <option>April</option>
+                <option>May</option>
+                <option>June</option>
+                <option>July</option>
+                <option>August</option>
+                <option>September</option>
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+            </select>
+            <select id="feeYear" onchange="loadFees()">
+                <option>2026</option>
+                <option>2025</option>
+            </select>
+        </div>
+
+        <div id="feeList">
+            <div class="dash-empty">Select a class to view fee status</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="../config.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="teacher-menu.js"></script>
+    <script src="fees.js"></script>
+</body>
+
+</html>

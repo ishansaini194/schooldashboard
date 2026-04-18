@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework — KRB School</title>
+    <link rel="stylesheet" href="../admin/form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="teacher.css">
+</head>
+
+<body>
+    <div class="page">
+        <div class="page-header">
+            <h1>Homework</h1>
+            <p>Broadcast homework to any class</p>
+        </div>
+
+        <div class="form-card" style="margin-bottom:24px;">
+            <div class="form-section">
+                <div class="section-title">Post New Homework</div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Class</label>
+                        <select id="hwClass">
+                            <option value="">Select class</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Section</label>
+                        <select id="hwSection">
+                            <option value="">All sections</option>
+                            <option>A</option>
+                            <option>B</option>
+                            <option>C</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Subject</label>
+                        <select id="hwSubject">
+                            <option value="">Select subject</option>
+                            <option>Math</option>
+                            <option>Science</option>
+                            <option>English</option>
+                            <option>Hindi</option>
+                            <option>Social Science</option>
+                            <option>Punjabi</option>
+                            <option>Computer</option>
+                        </select>
+                    </div>
+                    <div class="field span2">
+                        <label>Homework Details</label>
+                        <textarea id="hwContent" rows="3" placeholder="e.g. Complete exercise 4.2 Q1 to Q10"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="form-footer">
+                <button type="button" onclick="postHomework()">Post Homework</button>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <div class="section-title">All Homework</div>
+            <div style="display:flex; gap:8px;">
+                <select id="filterClass" onchange="loadHomework()" style="font-size:13px; padding:6px 10px;">
+                    <option value="">All Classes</option>
+                </select>
+            </div>
+        </div>
+        <div id="hwList">
+            <div class="dash-loading">Loading...</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="../config.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="teacher-menu.js"></script>
+    <script src="homework.js"></script>
+</body>
+
+</html>
