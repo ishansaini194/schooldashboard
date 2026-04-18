@@ -30,6 +30,7 @@ func PayFee(c *fiber.Ctx) error {
 		StudentName    string `json:"student_name"`
 		RollNo         string `json:"roll_no"` // add this
 		Class          string `json:"class"`
+		Section        string `json:"section"`
 		Month          string `json:"month"`
 		Year           int    `json:"year"`
 		FeeType        string `json:"fee_type"`
@@ -67,6 +68,7 @@ func PayFee(c *fiber.Ctx) error {
 		StudentName:    body.StudentName,
 		RollNo:         body.RollNo, // add this
 		Class:          body.Class,
+		Section:        body.Section,
 		Month:          body.Month,
 		Year:           body.Year,
 		FeeType:        body.FeeType,
@@ -105,17 +107,32 @@ func GetStudentFees(c *fiber.Ctx) error {
 	return c.JSON(fees)
 }
 
-// GET /api/fees/class/:class/month/:month/year/:year
+// GET /api/fees/class/:class/month/:month/year/:year?section=A
 func GetClassFeeStatus(c *fiber.Ctx) error {
 	class := c.Params("class")
 	month := c.Params("month")
 	year := c.Params("year")
+	section := c.Query("section")
+
+	studentQuery := database.DB.Where("class = ?", class)
+	if section != "" {
+		studentQuery = studentQuery.Where("section = ?", section)
+	}
 
 	var students []models.Student
-	database.DB.Where("class = ?", class).Order("CAST(roll_no AS INTEGER) asc").Find(&students)
+	studentQuery.Order("CAST(roll_no AS INTEGER) asc").Find(&students)
+
+	// build student id set so we only include fees for these students
+	studentIDs := make([]uint, 0, len(students))
+	for _, s := range students {
+		studentIDs = append(studentIDs, s.ID)
+	}
 
 	var fees []models.Fee
-	database.DB.Where("class = ? AND month = ? AND year = ?", class, month, year).Find(&fees)
+	if len(studentIDs) > 0 {
+		database.DB.Where("class = ? AND month = ? AND year = ? AND student_id IN ?",
+			class, month, year, studentIDs).Find(&fees)
+	}
 
 	feeMap := map[uint][]models.Fee{}
 	for _, f := range fees {
@@ -157,17 +174,31 @@ func GetClassFeeStatus(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 
-// GET /api/fees/pending/:class/:month/:year
+// GET /api/fees/pending/:class/:month/:year?section=A
 func GetPendingFees(c *fiber.Ctx) error {
 	class := c.Params("class")
 	month := c.Params("month")
 	year := c.Params("year")
+	section := c.Query("section")
+
+	studentQuery := database.DB.Where("class = ?", class)
+	if section != "" {
+		studentQuery = studentQuery.Where("section = ?", section)
+	}
 
 	var students []models.Student
-	database.DB.Where("class = ?", class).Find(&students)
+	studentQuery.Find(&students)
+
+	studentIDs := make([]uint, 0, len(students))
+	for _, s := range students {
+		studentIDs = append(studentIDs, s.ID)
+	}
 
 	var fees []models.Fee
-	database.DB.Where("class = ? AND month = ? AND year = ?", class, month, year).Find(&fees)
+	if len(studentIDs) > 0 {
+		database.DB.Where("class = ? AND month = ? AND year = ? AND student_id IN ?",
+			class, month, year, studentIDs).Find(&fees)
+	}
 
 	paidIDs := map[uint]bool{}
 	for _, f := range fees {

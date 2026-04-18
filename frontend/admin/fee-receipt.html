@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Receipt</title>
+    <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="fee-receipt.css">
+</head>
+<body>
+
+    <!-- Screen actions (hidden on print) -->
+    <div class="screen-actions no-print">
+        <button class="btn-secondary" onclick="history.back()">← Back</button>
+        <div style="display:flex; gap:10px;">
+            <button class="btn-secondary" onclick="window.location.href='fee-collect.html'">New Receipt</button>
+            <button class="btn-primary" onclick="window.print()">🖨 Print</button>
+        </div>
+    </div>
+
+    <!-- Receipt (printed) -->
+    <div class="receipt-wrap">
+        <div class="receipt" id="receipt">
+
+            <!-- Header -->
+            <div class="receipt-header">
+                <div class="school-name">KRB School</div>
+                <div class="school-sub">Fee Receipt</div>
+                <div class="divider">- - - - - - - - - - - - - - - - -</div>
+            </div>
+
+            <!-- Receipt Meta -->
+            <div class="receipt-meta">
+                <div class="meta-row">
+                    <span>Receipt No</span>
+                    <span id="rReceiptNo">—</span>
+                </div>
+                <div class="meta-row">
+                    <span>Date</span>
+                    <span id="rDate">—</span>
+                </div>
+            </div>
+
+            <div class="divider">- - - - - - - - - - - - - - - - -</div>
+
+            <!-- Student Info -->
+            <div class="receipt-section">
+                <div class="meta-row">
+                    <span>Student</span>
+                    <span id="rStudentName">—</span>
+                </div>
+                <div class="meta-row">
+                    <span>Class</span>
+                    <span id="rClass">—</span>
+                </div>
+                <div class="meta-row">
+                    <span>Roll No</span>
+                    <span id="rRollNo">—</span>
+                </div>
+                <div class="meta-row" id="epunjabRow">
+                    <span>ePunjab ID</span>
+                    <span id="rEpunjab">—</span>
+                </div>
+            </div>
+
+            <div class="divider">- - - - - - - - - - - - - - - - -</div>
+
+            <!-- Fee Info -->
+            <div class="receipt-section">
+                <div class="meta-row">
+                    <span>Fee Type</span>
+                    <span id="rFeeType">—</span>
+                </div>
+                <div class="meta-row">
+                    <span>Month</span>
+                    <span id="rMonth">—</span>
+                </div>
+                <div class="meta-row">
+                    <span>Base Amount</span>
+                    <span id="rBaseAmount">—</span>
+                </div>
+                <div class="meta-row" id="discountRow">
+                    <span>Discount</span>
+                    <span id="rDiscount">—</span>
+                </div>
+                <div class="meta-row total-row">
+                    <span>Amount Due</span>
+                    <span id="rFinalAmount">—</span>
+                </div>
+            </div>
+
+            <div class="divider">- - - - - - - - - - - - - - - - -</div>
+
+            <!-- Payment -->
+            <div class="receipt-section">
+                <div class="meta-row paid-row">
+                    <span>Paid</span>
+                    <span id="rPaidAmount">—</span>
+                </div>
+                <div class="meta-row" id="remainingRow">
+                    <span>Remaining</span>
+                    <span id="rRemaining">—</span>
+                </div>
+                <div class="meta-row" id="dueDateRow">
+                    <span>Due Date</span>
+                    <span id="rDueDate">—</span>
+                </div>
+            </div>
+
+            <div class="divider">- - - - - - - - - - - - - - - - -</div>
+
+            <!-- Status -->
+            <div class="receipt-status" id="rStatus">PAID</div>
+
+            <div class="divider">- - - - - - - - - - - - - - - - -</div>
+
+            <!-- Footer -->
+            <div class="receipt-footer">
+                <div class="signature-line">
+                    <span>Signature</span>
+                    <span>___________</span>
+                </div>
+                <div class="receipt-thanks">Thank you!</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../config.js"></script> 
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="fee-receipt.js"></script>
+</body>
+</html>

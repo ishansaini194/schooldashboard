@@ -18,12 +18,28 @@ func CreateResult(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	result := database.DB.Create(&r)
-	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": result.Error.Error()})
+	// check if result already exists
+	var existing academic.Result
+	err := database.DB.Where(
+		"student_id = ? AND subject = ? AND exam_type = ? AND year = ?",
+		r.StudentID, r.Subject, r.ExamType, r.Year,
+	).First(&existing).Error
+
+	if err == nil {
+		// update existing
+		existing.Marks = r.Marks
+		existing.MaxMarks = r.MaxMarks
+		existing.EnteredBy = r.EnteredBy
+		database.DB.Save(&existing)
+		return c.JSON(fiber.Map{"message": "result updated"})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "result added"})
+	// create new
+	if err := database.DB.Create(&r).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "result saved"})
 }
 
 // GET /api/results/student/:student_id?exam_type=midterm&year=2026
@@ -53,11 +69,15 @@ func GetStudentResults(c *fiber.Ctx) error {
 func GetClassResults(c *fiber.Ctx) error {
 	class := c.Params("class")
 	section := c.Params("section")
+	subject := c.Query("subject", "")
 	examType := c.Query("exam_type", "")
 	year := c.Query("year", "")
 
 	query := database.DB.Where("class = ? AND section = ?", class, section)
 
+	if subject != "" {
+		query = query.Where("subject = ?", subject)
+	}
 	if examType != "" {
 		query = query.Where("exam_type = ?", examType)
 	}
@@ -66,7 +86,7 @@ func GetClassResults(c *fiber.Ctx) error {
 	}
 
 	var results []academic.Result
-	if err := query.Order("subject asc").Find(&results).Error; err != nil {
+	if err := query.Find(&results).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fees</title>
+    <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="fees.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- Header -->
+        <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+                <h1>Fee Management</h1>
+                <p id="pageSubtitle">Loading...</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <button class="export-btn" onclick="exportCSV()">↓ CSV</button>
+                <button class="export-btn" onclick="exportPDF()">🖨 PDF</button>
+                <button class="btn-primary" onclick="window.location.href='fee-collect.html'">+ Collect Fee</button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="fee-filters">
+            <div class="filter-group">
+                <label>Class</label>
+                <select id="classFilter" onchange="loadFeeStatus()">
+                    <option value="">All Classes</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Month</label>
+                <select id="monthFilter" onchange="loadFeeStatus()">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Year</label>
+                <select id="yearFilter" onchange="loadFeeStatus()"></select>
+            </div>
+            <div class="filter-group search-group">
+                <label>Search</label>
+                <input type="text" id="searchInput" placeholder="Name, Roll No, ePunjab ID..." oninput="filterList()">
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="statTotal">—</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+            <div class="stat-card paid">
+                <div class="stat-value" id="statPaid">—</div>
+                <div class="stat-label">Paid</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-value" id="statPending">—</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card amount">
+                <div class="stat-value" id="statAmount">—</div>
+                <div class="stat-label">Collected</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" id="tabAll" onclick="switchTab('all')">All</button>
+            <button class="tab" id="tabPaid" onclick="switchTab('paid')">Paid</button>
+            <button class="tab" id="tabPending" onclick="switchTab('pending')">Pending</button>
+        </div>
+
+        <!-- Student Fee List -->
+        <div id="feeList" class="fee-list">
+            <div class="empty-state">Select a class to view fee status</div>
+        </div>
+
+    </div>
+
+    <!-- PDF Print Area -->
+    <div id="pdfPrintArea" class="pdf-print-area no-print"></div>
+
+    <!-- Side Panel Overlay -->
+    <div class="panel-overlay" id="panelOverlay" onclick="closePanel()"></div>
+
+    <!-- Side Panel -->
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-header">
+            <div class="panel-student-info">
+                <div class="panel-avatar" id="panelAvatar">?</div>
+                <div>
+                    <div class="panel-name" id="panelName">—</div>
+                    <div class="panel-meta" id="panelMeta">—</div>
+                </div>
+            </div>
+            <button class="panel-close" onclick="closePanel()">✕</button>
+        </div>
+
+        <div class="panel-summary">
+            <div class="panel-stat">
+                <div class="panel-stat-value" id="panelTotalPaid">—</div>
+                <div class="panel-stat-label">Total Paid</div>
+            </div>
+            <div class="panel-stat">
+                <div class="panel-stat-value pending" id="panelTotalPending">—</div>
+                <div class="panel-stat-label">Pending</div>
+            </div>
+            <div class="panel-stat">
+                <div class="panel-stat-value" id="panelMonthsCount">—</div>
+                <div class="panel-stat-label">Paid/Total</div>
+            </div>
+        </div>
+
+        <div class="panel-section-title">Fee History</div>
+        <div class="panel-history" id="panelHistory">
+            <div class="panel-loading">Loading...</div>
+        </div>
+
+        <div class="panel-footer">
+            <button class="btn-secondary" onclick="closePanel()">Close</button>
+            <button class="btn-primary" id="panelCollectBtn">Collect Fee</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../config.js"></script> 
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="../menu.js"></script>
+    <script src="fees.js"></script>
+</body>
+
+</html>

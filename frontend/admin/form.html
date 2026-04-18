@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="../confirm.css">
+</head>
+
+<body>
+
+    <!-- Page -->
+    <div class="page">
+        <div class="page-header">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                <div>
+                    <h1>Add New Student</h1>
+                    <p>Fill in the details below to register a student</p>
+                </div>
+                <button class="btn-secondary" onclick="window.location.href='class.html'">← Classes</button>
+            </div>
+        </div>
+
+        <div class="form-card">
+            <form id="studentForm" novalidate>
+
+                <!-- Basic Info -->
+                <div class="form-section">
+                    <div class="section-title">Basic Information</div>
+                    <div class="form-grid">
+                        <div class="field span2">
+                            <label>Full Name<span class="req">*</span></label>
+                            <input type="text" name="name" placeholder="e.g. Rahul Singh" maxlength="50">
+                        </div>
+                        <div class="field">
+                            <label>Class<span class="req">*</span></label>
+                            <input type="number" name="class" placeholder="e.g. 6" min="1" max="12">
+                        </div>
+                        <div class="field">
+                            <label>Section<span class="req">*</span></label>
+                            <input type="text" name="section" placeholder="e.g. A" maxlength="1" style="text-transform:uppercase">
+                        </div>
+                        <div class="field">
+                            <label>Roll No<span class="req">*</span></label>
+                            <input type="text" name="roll_no" placeholder="e.g. 1" inputmode="numeric" maxlength="4">
+                        </div>
+                        <div class="field">
+                            <label>Gender</label>
+                            <select name="gender">
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Date of Birth</label>
+                            <input type="date" name="dob">
+                        </div>
+                        <div class="field">
+                            <label>Phone<span class="req">*</span></label>
+                            <input type="tel" name="phone" placeholder="10-digit number" inputmode="numeric" maxlength="10">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ID Details -->
+                <div class="form-section">
+                    <div class="section-title">ID Details</div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Aadhar No</label>
+                            <input type="text" name="aadhar_no" placeholder="12-digit number" inputmode="numeric" maxlength="12">
+                        </div>
+                        <div class="field">
+                            <label>ePunjab ID<span class="req">*</span></label>
+                            <input type="text" name="epunjab_id" placeholder="e.g. EP2024001" maxlength="20">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parent Info -->
+                <div class="form-section">
+                    <div class="section-title">Parent Information</div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Father's Name</label>
+                            <input type="text" name="father_name" placeholder="Father's full name" maxlength="50">
+                        </div>
+                        <div class="field">
+                            <label>Father's Contact</label>
+                            <input type="tel" name="father_contact" placeholder="10-digit number" inputmode="numeric" maxlength="10">
+                        </div>
+                        <div class="field">
+                            <label>Father's Aadhar</label>
+                            <input type="text" name="father_aadhar" placeholder="12-digit number" inputmode="numeric" maxlength="12">
+                        </div>
+                        <div class="field">
+                            <label>Mother's Name</label>
+                            <input type="text" name="mother_name" placeholder="Mother's full name" maxlength="50">
+                        </div>
+                        <div class="field">
+                            <label>Mother's Contact</label>
+                            <input type="tel" name="mother_contact" placeholder="10-digit number" inputmode="numeric" maxlength="10">
+                        </div>
+                        <div class="field">
+                            <label>Caste</label>
+                            <input type="text" name="caste" placeholder="e.g. General" maxlength="30">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other -->
+                <div class="form-section">
+                    <div class="section-title">Other Details</div>
+                    <div class="form-grid">
+                        <div class="field span2">
+                            <label>Address</label>
+                            <input type="text" name="address" placeholder="Full address" maxlength="200">
+                        </div>
+                        <div class="field span2">
+                            <label>Previous School Details</label>
+                            <input type="text" name="previous_school_details"
+                                placeholder="Previous school name and class" maxlength="200">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="reset">Clear</button>
+                    <button type="submit">Add Student</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script src="../config.js"></script>
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="../menu.js"></script>
+    <script src="../validators.js"></script>
+    <script src="form.js"></script>
+</body>
+
+</html>

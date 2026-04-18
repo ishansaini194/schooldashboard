@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Detail</title>
+    <link rel="stylesheet" href="form.css">
+    <link rel="stylesheet" href="../confirm.css">
+    <link rel="stylesheet" href="student-detail.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- Header -->
+        <div class="detail-header">
+            <button class="btn-secondary" onclick="history.back()">← Back</button>
+            <div class="header-actions">
+                <button class="btn-edit-main" onclick="openEditModal()">Edit</button>
+                <button class="btn-delete-main" onclick="deleteStudent()">Delete</button>
+            </div>
+        </div>
+
+        <!-- Student Hero -->
+        <div class="student-hero">
+            <div class="avatar" id="avatarInitial">—</div>
+            <div class="hero-info">
+                <h1 id="studentName">Loading...</h1>
+                <div class="badges" id="studentBadges"></div>
+            </div>
+        </div>
+
+        <!-- Info Sections -->
+        <div class="detail-grid">
+
+            <div class="detail-card">
+                <div class="section-title">Basic Information</div>
+                <div class="info-list">
+                    <div class="info-row"><span class="info-label">Phone</span><span id="d-phone">—</span></div>
+                    <div class="info-row"><span class="info-label">Gender</span><span id="d-gender">—</span></div>
+                    <div class="info-row"><span class="info-label">Date of Birth</span><span id="d-dob">—</span></div>
+                    <div class="info-row"><span class="info-label">Address</span><span id="d-address">—</span></div>
+                    <div class="info-row"><span class="info-label">Caste</span><span id="d-caste">—</span></div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="section-title">ID Details</div>
+                <div class="info-list">
+                    <div class="info-row"><span class="info-label">Aadhar No</span><span id="d-aadhar">—</span></div>
+                    <div class="info-row"><span class="info-label">ePunjab ID</span><span id="d-epunjab">—</span></div>
+                    <div class="info-row"><span class="info-label">Previous School</span><span
+                            id="d-prevschool">—</span></div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="section-title">Father's Information</div>
+                <div class="info-list">
+                    <div class="info-row"><span class="info-label">Name</span><span id="d-fname">—</span></div>
+                    <div class="info-row"><span class="info-label">Contact</span><a id="d-fcontact" href="#">—</a></div>
+                    <div class="info-row"><span class="info-label">Aadhar</span><span id="d-faadhar">—</span></div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="section-title">Mother's Information</div>
+                <div class="info-list">
+                    <div class="info-row"><span class="info-label">Name</span><span id="d-mname">—</span></div>
+                    <div class="info-row"><span class="info-label">Contact</span><a id="d-mcontact" href="#">—</a></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Student</h3>
+                <button class="modal-close" onclick="closeEditModal()">✕</button>
+            </div>
+            <form id="editForm" novalidate>
+                <div class="form-section">
+                    <div class="section-title">Basic Information</div>
+                    <div class="form-grid">
+                        <div class="field span2">
+                            <label>Full Name<span class="req">*</span></label>
+                            <input type="text" id="e-name" name="name" maxlength="50">
+                        </div>
+                        <div class="field">
+                            <label>Class<span class="req">*</span></label>
+                            <input type="number" id="e-class" name="class" min="1" max="12">
+                        </div>
+                        <div class="field">
+                            <label>Section<span class="req">*</span></label>
+                            <input type="text" id="e-section" name="section" maxlength="1" style="text-transform:uppercase">
+                        </div>
+                        <div class="field">
+                            <label>Roll No<span class="req">*</span></label>
+                            <input type="text" id="e-rollno" name="roll_no" inputmode="numeric" maxlength="4">
+                        </div>
+                        <div class="field">
+                            <label>Gender</label>
+                            <select id="e-gender" name="gender">
+                                <option value="">Select</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Date of Birth</label>
+                            <input type="date" id="e-dob" name="dob">
+                        </div>
+                        <div class="field">
+                            <label>Phone<span class="req">*</span></label>
+                            <input type="tel" id="e-phone" name="phone" inputmode="numeric" maxlength="10">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">ID Details</div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Aadhar No</label>
+                            <input type="text" id="e-aadhar" name="aadhar_no" inputmode="numeric" maxlength="12">
+                        </div>
+                        <div class="field">
+                            <label>ePunjab ID<span class="req">*</span></label>
+                            <input type="text" id="e-epunjab" name="epunjab_id" maxlength="20">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Parent Information</div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Father's Name</label>
+                            <input type="text" id="e-fname" name="father_name" maxlength="50">
+                        </div>
+                        <div class="field">
+                            <label>Father's Contact</label>
+                            <input type="tel" id="e-fcontact" name="father_contact" inputmode="numeric" maxlength="10">
+                        </div>
+                        <div class="field">
+                            <label>Father's Aadhar</label>
+                            <input type="text" id="e-faadhar" name="father_aadhar" inputmode="numeric" maxlength="12">
+                        </div>
+                        <div class="field">
+                            <label>Mother's Name</label>
+                            <input type="text" id="e-mname" name="mother_name" maxlength="50">
+                        </div>
+                        <div class="field">
+                            <label>Mother's Contact</label>
+                            <input type="tel" id="e-mcontact" name="mother_contact" inputmode="numeric" maxlength="10">
+                        </div>
+                        <div class="field">
+                            <label>Caste</label>
+                            <input type="text" id="e-caste" name="caste" maxlength="30">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-title">Other Details</div>
+                    <div class="form-grid">
+                        <div class="field span2">
+                            <label>Address</label>
+                            <input type="text" id="e-address" name="address" maxlength="200">
+                        </div>
+                        <div class="field span2">
+                            <label>Previous School</label>
+                            <input type="text" id="e-prevschool" name="previous_school_details" maxlength="200">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../config.js"></script> 
+    <script src="../auth.js"></script>
+    <script src="../confirm.js"></script>
+    <script src="../menu.js"></script>
+    <script src="../validators.js"></script>
+    <script src="student-detail.js"></script>
+</body>
+
+</html>

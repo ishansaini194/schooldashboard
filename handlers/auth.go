@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/ishansaini194/dashboard/database"
+	"github.com/ishansaini194/dashboard/middleware"
 	"github.com/ishansaini194/dashboard/models"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -140,10 +141,7 @@ func ChangePassword(c *fiber.Ctx) error {
 
 // PUT /api/auth/reset-password/:user_id
 func ResetPassword(c *fiber.Ctx) error {
-	claims, _ := c.Locals("user").(jwt.MapClaims)
-	role, _ := claims["role"].(string)
-
-	if role != "admin" {
+	if middleware.GetRole(c) != "admin" {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "admin only"})
 	}
 
@@ -167,4 +165,21 @@ func ResetPassword(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"message": "password reset"})
+}
+
+// GET /api/users/epunjab/:epunjab_id
+func GetUserByEpunjabID(c *fiber.Ctx) error {
+	epunjabID := c.Params("epunjab_id")
+
+	var user models.User
+	if err := database.DB.Where("epunjab_id = ?", epunjabID).First(&user).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "user not found"})
+	}
+
+	return c.JSON(fiber.Map{
+		"id":         user.ID,
+		"username":   user.Username,
+		"role":       user.Role,
+		"epunjab_id": user.EpunjabID,
+	})
 }
