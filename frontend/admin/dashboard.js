@@ -187,13 +187,20 @@ function renderClassProgress(results) {
 // → PendingRow
 function renderPending(pending) {
     const list = document.getElementById('pendingList')
+    const duePill = document.getElementById('duePill')
 
     if (!pending || pending.length === 0) {
         list.innerHTML = '<div class="dash-empty">🎉 No pending fees this month</div>'
+        if (duePill) duePill.classList.add('hidden')
         return
     }
 
     const shown = pending.slice(0, 8)
+
+    if (duePill) {
+        duePill.textContent = `${shown.length} due`
+        duePill.classList.remove('hidden')
+    }
 
     list.innerHTML = shown.map(s => `
         <div class="pending-row ${s.status}">

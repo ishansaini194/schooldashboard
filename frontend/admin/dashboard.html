@@ -12,7 +12,7 @@
 
 <body>
 
-    <div class="page">
+    <div class="page wide">
 
         <!-- Header -->
         <div class="dash-header">
@@ -30,7 +30,7 @@
         <!-- Quick Search -->
         <div class="quick-search-wrap">
             <input type="text" id="quickSearch" placeholder="🔍  Search student by name, roll no or ePunjab ID..."
-                   oninput="quickSearch()" autocomplete="off">
+                oninput="quickSearch()" autocomplete="off">
             <div id="quickSearchResults" class="quick-search-results hidden"></div>
         </div>
 
@@ -44,92 +44,107 @@
         <!-- Stat Cards -->
         <div class="stat-grid">
             <div class="stat-card" onclick="window.location.href='class.html'" style="cursor:pointer">
-                <div class="stat-icon">✦</div>
                 <div class="stat-value" id="statStudents">—</div>
                 <div class="stat-label">Students</div>
             </div>
             <div class="stat-card" onclick="window.location.href='class.html'" style="cursor:pointer">
-                <div class="stat-icon">◫</div>
                 <div class="stat-value" id="statClasses">—</div>
                 <div class="stat-label">Classes</div>
             </div>
             <div class="stat-card accent" onclick="window.location.href='fees.html'" style="cursor:pointer">
-                <div class="stat-icon">₹</div>
                 <div class="stat-value" id="statCollected">—</div>
                 <div class="stat-label">Collected</div>
             </div>
-            <div class="stat-card warning" onclick="window.location.href='fees.html?tab=pending'" style="cursor:pointer">
-                <div class="stat-icon">!</div>
+            <div class="stat-card warning" onclick="window.location.href='fees.html?tab=pending'"
+                style="cursor:pointer">
                 <div class="stat-value" id="statPending">—</div>
                 <div class="stat-label">Pending</div>
             </div>
         </div>
 
-        <!-- Collection Progress Bar -->
-        <div class="collection-progress-card" id="collectionProgress">
-            <div class="cp-header">
-                <div class="cp-label">Fee Collection Progress</div>
-                <div class="cp-amounts">
-                    <span class="cp-collected" id="cpCollected">₹0</span>
-                    <span class="cp-sep">of</span>
-                    <span class="cp-expected" id="cpExpected">₹0</span>
-                    <span class="cp-sep">expected</span>
+        <!-- Progress + Quick Actions (side by side) -->
+        <div class="dash-split-top">
+
+            <!-- Collection Progress Bar -->
+            <div class="collection-progress-card" id="collectionProgress">
+                <div class="cp-header">
+                    <div class="cp-label">Fee Collection Progress</div>
+                    <div class="cp-amounts">
+                        <span class="cp-collected" id="cpCollected">₹0</span>
+                        <span class="cp-sep">of</span>
+                        <span class="cp-expected" id="cpExpected">₹0</span>
+                        <span class="cp-sep">expected</span>
+                    </div>
+                </div>
+                <div class="cp-bar-wrap">
+                    <div class="cp-bar" id="cpBar" style="width:0%"></div>
+                </div>
+                <div class="cp-footer">
+                    <span class="cp-pct" id="cpPct">0%</span>
+                    <span class="cp-remaining" id="cpRemaining">—</span>
                 </div>
             </div>
-            <div class="cp-bar-wrap">
-                <div class="cp-bar" id="cpBar" style="width:0%"></div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions-panel">
+                <div class="section-label">Quick Actions</div>
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="window.location.href='form.html'">
+                        <span class="action-icon">+</span>
+                        <span>Add Student</span>
+                    </button>
+                    <button class="action-btn primary" onclick="window.location.href='fee-collect.html'">
+                        <span class="action-icon">₹</span>
+                        <span>Collect Fee</span>
+                    </button>
+                    <button class="action-btn" onclick="window.location.href='class.html'">
+                        <span class="action-icon">◫</span>
+                        <span>Classes</span>
+                    </button>
+                    <button class="action-btn" onclick="window.location.href='fees.html'">
+                        <span class="action-icon">📋</span>
+                        <span>Fee Report</span>
+                    </button>
+                </div>
             </div>
-            <div class="cp-footer">
-                <span class="cp-pct" id="cpPct">0%</span>
-                <span class="cp-remaining" id="cpRemaining">—</span>
-            </div>
+
         </div>
 
-        <!-- Quick Actions -->
-        <div class="section-header">
-            <div class="section-title">Quick Actions</div>
-        </div>
-        <div class="quick-actions">
-            <button class="action-btn" onclick="window.location.href='form.html'">
-                <span class="action-icon">+</span>
-                <span>Add Student</span>
-            </button>
-            <button class="action-btn primary" onclick="window.location.href='fee-collect.html'">
-                <span class="action-icon">₹</span>
-                <span>Collect Fee</span>
-            </button>
-            <button class="action-btn" onclick="window.location.href='class.html'">
-                <span class="action-icon">◫</span>
-                <span>Classes</span>
-            </button>
-            <button class="action-btn" onclick="window.location.href='fees.html'">
-                <span class="action-icon">📋</span>
-                <span>Fee Report</span>
-            </button>
-        </div>
+        <!-- Class-wise + Pending (side by side) -->
+        <div class="dash-split">
 
-        <!-- Class Fee Progress -->
-        <div class="section-header">
-            <div class="section-title">Class-wise Fee Status</div>
-            <div class="section-sub" id="progressMonthLabel">—</div>
-        </div>
-        <div class="class-progress-list" id="classProgressList">
-            <div class="dash-loading">Loading...</div>
-        </div>
-
-        <!-- Pending & Partial -->
-        <div class="section-header" style="margin-top:28px;">
-            <div class="section-title">Pending & Partial</div>
-            <div class="pending-export-btns">
-                <button class="export-btn" onclick="exportPendingCSV()">↓ CSV</button>
-                <button class="export-btn" onclick="exportPendingPDF()">🖨 PDF</button>
+            <!-- Class Fee Progress -->
+            <div class="split-card">
+                <div class="split-card-header">
+                    <div class="section-label">Class-wise Fee Status</div>
+                    <div class="section-sub" id="progressMonthLabel">—</div>
+                </div>
+                <div class="class-progress-list scroll-list" id="classProgressList">
+                    <div class="dash-loading">Loading...</div>
+                </div>
             </div>
-        </div>
-        <div class="pending-list" id="pendingList">
-            <div class="dash-loading">Loading...</div>
-        </div>
-        <div class="pending-footer">
-            <button class="view-all-btn" onclick="window.location.href='fees.html?tab=pending'">View All in Fee Manager →</button>
+
+            <!-- Pending & Partial -->
+            <div class="split-card">
+                <div class="split-card-header">
+                    <div class="section-label">Pending & Partial</div>
+                    <div class="header-right">
+                        <span class="due-pill hidden" id="duePill">0 due</span>
+                        <div class="pending-export-btns">
+                            <button class="export-btn" onclick="exportPendingCSV()">↓ CSV</button>
+                            <button class="export-btn" onclick="exportPendingPDF()">🖨 PDF</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="pending-list scroll-list" id="pendingList">
+                    <div class="dash-loading">Loading...</div>
+                </div>
+                <div class="pending-footer">
+                    <button class="view-all-btn" onclick="window.location.href='fees.html?tab=pending'">View All in Fee
+                        Manager →</button>
+                </div>
+            </div>
+
         </div>
 
         <!-- Recent Payments -->
@@ -145,10 +160,11 @@
     <div id="pdfPrintArea" class="pdf-print-area no-print"></div>
     <div class="toast" id="toast"></div>
 
-    <script src="../config.js"></script> 
+    <script src="../config.js"></script>
     <script src="../auth.js"></script>
     <script src="../confirm.js"></script>
     <script src="../menu.js"></script>
     <script src="dashboard.js"></script>
 </body>
+
 </html>

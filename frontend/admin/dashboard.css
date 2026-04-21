@@ -1,3 +1,35 @@
+/* ── Wider page layout for dashboard ── */
+.page.wide {
+    max-width: 1320px;
+    margin-left: calc(var(--sidebar-w) + ((100vw - var(--sidebar-w) - 1320px) / 2));
+    padding-left: 40px;
+}
+
+.page.wide.sidebar-collapsed {
+    margin-left: auto;
+}
+
+@media (max-width: 1400px) {
+    .page.wide {
+        max-width: none;
+        margin-left: var(--sidebar-w);
+        padding-left: 48px;
+        padding-right: 32px;
+    }
+
+    .page.wide.sidebar-collapsed {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .page.wide {
+        margin-left: auto !important;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+
 /* ── Dashboard Header ── */
 .dash-header {
     display: flex;
@@ -236,7 +268,7 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 20px;
+    padding: 24px;
     text-align: center;
     box-shadow: var(--shadow);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -255,12 +287,6 @@
 .stat-card.warning {
     border-color: #f0d0c0;
     background: #fdf4f0;
-}
-
-.stat-icon {
-    font-size: 20px;
-    margin-bottom: 8px;
-    opacity: 0.5;
 }
 
 .stat-value {
@@ -286,13 +312,40 @@
     letter-spacing: 0.06em;
 }
 
+/* ── Dashboard Top Split (Progress + Quick Actions) ── */
+.dash-split-top {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 14px;
+    margin-bottom: 28px;
+    align-items: start;
+}
+
+.quick-actions-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+}
+
+.quick-actions-panel .section-label {
+    margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+    .dash-split-top {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ── Collection Progress Bar ── */
 .collection-progress-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 18px 20px;
-    margin-bottom: 28px;
+    margin-bottom: 0px;
     box-shadow: var(--shadow);
 }
 
@@ -335,9 +388,9 @@
 }
 
 .cp-bar-wrap {
-    height: 8px;
+    height: 12px;
     background: var(--border);
-    border-radius: 4px;
+    border-radius: 6px;
     overflow: hidden;
     margin-bottom: 8px;
 }
@@ -345,7 +398,7 @@
 .cp-bar {
     height: 100%;
     background: var(--accent);
-    border-radius: 4px;
+    border-radius: 6px;
     transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -386,33 +439,34 @@
 
 /* ── Quick Actions ── */
 .quick-actions {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .action-btn {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    gap: 8px;
-    padding: 16px 12px;
-    background: var(--surface);
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     font-family: 'DM Sans', sans-serif;
     font-size: 13px;
+    font-weight: 500;
     color: var(--text);
     cursor: pointer;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow: var(--shadow);
+    transition: background 0.2s;
+    text-align: left;
+    box-shadow: none;
 }
 
 .action-btn:hover {
-    background: var(--bg);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    background: var(--accent-light);
+    transform: none;
+    box-shadow: none;
 }
 
 .action-btn.primary {
@@ -430,25 +484,106 @@
     line-height: 1;
 }
 
+/* ── Dashboard Split (Class + Pending side by side) ── */
+.dash-split {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 14px;
+    margin-bottom: 28px;
+    align-items: start;
+}
+
+.split-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.split-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.due-pill {
+    background: #fdf0f0;
+    color: #c0392b;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+}
+
+.due-pill.hidden {
+    display: none;
+}
+
+.scroll-list {
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-right: -4px;
+}
+
+.scroll-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.scroll-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+}
+
+.scroll-list::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+}
+
 /* ── Class Progress ── */
 .class-progress-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
 }
 
 .progress-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
-    box-shadow: var(--shadow);
-    transition: box-shadow 0.2s, transform 0.15s;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    border-radius: 6px;
+}
+
+.progress-card:last-child {
+    border-bottom: none;
 }
 
 .progress-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    transform: translateY(-1px);
+    background: var(--bg);
 }
 
 .progress-top {
@@ -514,7 +649,6 @@
 .pending-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
 }
 
 .pending-export-btns {
@@ -545,23 +679,18 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    transition: box-shadow 0.2s;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    border-radius: 6px;
+}
+
+.pending-row:last-child {
+    border-bottom: none;
 }
 
 .pending-row:hover {
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-}
-
-.pending-row.partial {
-    border-color: #f0d8a0;
-}
-
-.pending-row.unpaid {
-    border-color: #f0c8c8;
+    background: var(--bg);
 }
 
 .pending-class {
@@ -718,7 +847,7 @@
 /* ── Mini Buttons ── */
 .btn-mini {
     padding: 6px 14px;
-    background: var(--accent);
+    background: #1a1f2e;
     border: none;
     border-radius: 7px;
     color: #fff;
@@ -732,7 +861,7 @@
 }
 
 .btn-mini:hover {
-    background: #234a31;
+    background: #2d3548;
 }
 
 .btn-mini.secondary {
@@ -850,6 +979,16 @@
         font-size: 12px;
         color: #666;
         text-align: right;
+    }
+}
+
+@media (max-width: 900px) {
+    .dash-split {
+        grid-template-columns: 1fr;
+    }
+
+    .scroll-list {
+        max-height: none;
     }
 }
 
