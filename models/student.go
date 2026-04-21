@@ -4,11 +4,11 @@ import "gorm.io/gorm"
 
 type Student struct {
 	BaseModel
+	SchoolID              uint   `json:"school_id"`
 	Name                  string `json:"name"`
-	Class                 string `json:"class"`
-	Section               string `json:"section"`
 	Phone                 string `json:"phone"`
-	RollNo                string `json:"roll_no"`
+	Gender                string `json:"gender"`
+	DOB                   string `json:"dob"`
 	AadharNo              string `json:"aadhar_no"`
 	EpunjabId             string `json:"epunjab_id"`
 	FatherName            string `json:"father_name"`
@@ -18,9 +18,8 @@ type Student struct {
 	MotherContact         string `json:"mother_contact"`
 	Address               string `json:"address"`
 	Caste                 string `json:"caste"`
-	Gender                string `json:"gender"`
 	PreviousSchoolDetails string `json:"previous_school_details"`
-	DOB                   string `json:"dob"`
+	IsActive              bool   `json:"is_active" gorm:"default:true"`
 }
 
 func MigrateStudent(db *gorm.DB) error {

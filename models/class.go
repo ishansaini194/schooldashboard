@@ -4,10 +4,10 @@ import "gorm.io/gorm"
 
 type Class struct {
 	BaseModel
-	Class          int    `json:"class"`
+	SchoolID       uint   `json:"school_id"`
+	Number         int    `json:"number"`
 	Section        string `json:"section"`
-	TeacherName    string `json:"teacher_name"`
-	TeacherContact string `json:"teacher_contact"`
+	ClassTeacherID *uint  `json:"class_teacher_id"`
 	TuitionFee     int    `json:"tuition_fee"`
 	TransportFee   int    `json:"transport_fee"`
 }
