@@ -1,9 +1,8 @@
 package models
 
 import (
-	"time"
-
 	"gorm.io/gorm"
+	"time"
 )
 
 type Payment struct {
@@ -12,7 +11,7 @@ type Payment struct {
 	CollectedBy uint      `json:"collected_by"` // user_id
 	Amount      int       `json:"amount"`
 	ReceiptNo   string    `json:"receipt_no" gorm:"uniqueIndex"`
-	PaymentMode string    `json:"payment_mode" gorm:"default:'cash'"` // cash/online/cheque
+	PaymentMode string    `json:"payment_mode" gorm:"default:'cash'"` // cash / online / cheque
 	PaidAt      time.Time `json:"paid_at"`
 	Notes       string    `json:"notes"`
 }

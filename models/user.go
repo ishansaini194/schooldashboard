@@ -7,10 +7,10 @@ type User struct {
 	SchoolID  uint   `json:"school_id"`
 	Username  string `json:"username" gorm:"uniqueIndex"`
 	Password  string `json:"-"`
-	Role      string `json:"role"` // admin/teacher/student
+	Role      string `json:"role"` // admin / teacher / student
 	EpunjabID string `json:"epunjab_id"`
 	StudentID *uint  `json:"student_id"` // nullable
-	TeacherID *uint  `json:"teacher_id"` // nullable (new)
+	TeacherID *uint  `json:"teacher_id"` // nullable
 	LastLogin string `json:"last_login"`
 }
 

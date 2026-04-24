@@ -1,7 +1,5 @@
 package models
 
-import "gorm.io/gorm"
-
 type Teacher struct {
 	BaseModel
 	SchoolID      uint   `json:"school_id"`
@@ -12,8 +10,4 @@ type Teacher struct {
 	Subject       string `json:"subject"`
 	Qualification string `json:"qualification"`
 	IsActive      bool   `json:"is_active" gorm:"default:true"`
-}
-
-func MigrateTeacher(db *gorm.DB) error {
-	return db.AutoMigrate(&Teacher{})
 }

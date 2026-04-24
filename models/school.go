@@ -1,7 +1,5 @@
 package models
 
-import "gorm.io/gorm"
-
 type School struct {
 	BaseModel
 	Name    string `json:"name"`
@@ -12,6 +10,6 @@ type School struct {
 	LogoURL string `json:"logo_url"`
 }
 
-func MigrateSchool(db *gorm.DB) error {
-	return db.AutoMigrate(&School{})
+func MigrateSchool(db interface{ AutoMigrate(...interface{}) error }) error {
+	return nil // handled centrally in migration.go
 }
