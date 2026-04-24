@@ -11,9 +11,11 @@ async function loadClasses() {
     const res = await authFetch(`${API}/classes`)
     if (!res || !res.ok) return
     const classes = await res.json() || []
+    // deduplicate by class number for the dropdown
+    const unique = [...new Map(classes.map(c => [c.class, c])).values()]
     document.getElementById('resClass').innerHTML =
         '<option value="">Select class</option>' +
-        classes.map(c => `<option value="${c.class}">${c.class}</option>`).join('')
+        unique.map(c => `<option value="${c.class}">Class ${c.class}</option>`).join('')
 }
 
 async function loadStudents() {
@@ -25,25 +27,26 @@ async function loadStudents() {
     const examType = document.getElementById('resExamType').value
     const year = document.getElementById('resYear').value
 
-    const res = await authFetch(`${API}/students/class/${cls}`)
+    const sectionParam = section ? `?section=${encodeURIComponent(section)}` : ''
+    const res = await authFetch(`${API}/students/class/${cls}${sectionParam}`)
     if (!res || !res.ok) return
     let allStudents = await res.json() || []
 
-    if (section) allStudents = allStudents.filter(s => s.section === section)
-    allStudents = [...new Map(allStudents.map(s => [s.ID || s.id, s])).values()]
+    // deduplicate by id
+    allStudents = [...new Map(allStudents.map(s => [s.id, s])).values()]
     students = allStudents
 
     document.getElementById('studentMarksSection').style.display = 'block'
     document.getElementById('marksList').innerHTML = students.map((s, index) => `
         <div style="display:flex; align-items:center; gap:16px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin-bottom:8px;">
             <div style="flex:1;">
-                <div style="font-size:14px; font-weight:500; color:var(--text);">${s.name}</div>
+                <div style="font-size:14px; font-weight:500; color:var(--text);">${esc(s.name)}</div>
                 <div style="font-size:12px; color:var(--muted);">Roll ${s.roll_no || '—'}</div>
             </div>
             <input
                 type="number"
                 class="marks-input"
-                id="marks_${s.ID || s.id}"
+                id="marks_${s.id}"
                 data-index="${index}"
                 placeholder="Marks"
                 min="0"
@@ -52,7 +55,6 @@ async function loadStudents() {
         </div>
     `).join('')
 
-    // load existing marks if subject and exam type selected
     if (subject && examType && year) {
         await loadExistingMarks(cls, section, subject, examType, year)
     }
@@ -65,7 +67,6 @@ async function loadExistingMarks(cls, section, subject, examType, year) {
     if (!res || !res.ok) return
     const results = await res.json() || []
 
-    // pre-fill inputs with existing marks
     results.forEach(r => {
         const input = document.getElementById(`marks_${r.student_id}`)
         if (input) input.value = r.marks
@@ -93,23 +94,22 @@ async function saveAllMarks() {
     let skipped = 0
 
     for (const s of students) {
-        const id = s.ID || s.id
-        const marksInput = document.getElementById(`marks_${id}`)
+        const marksInput = document.getElementById(`marks_${s.id}`)
         const marksVal = marksInput?.value.trim()
         if (!marksVal) { skipped++; continue }
 
         const res = await authFetch(`${API}/results`, {
             method: 'POST',
             body: JSON.stringify({
-                student_id: id,
+                student_id:    s.id,
+                enrollment_id: s.enrollment_id || null, // new schema
+                class:         cls,
+                section:       section || '',
                 subject,
-                exam_type: examType,
-                marks: parseInt(marksVal),
-                max_marks: maxMarks,
+                exam_type:     examType,
+                marks:         parseInt(marksVal),
+                max_marks:     maxMarks,
                 year,
-                class: cls,
-                section: section || '',
-                entered_by: username || 'Teacher'
             })
         })
         if (res && res.ok) saved++
