@@ -10,61 +10,58 @@ import (
 
 func AuthRequired() fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// get token from header
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "missing token"})
 		}
 
-		// check Bearer prefix
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token format"})
-		}
+		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+		secret := []byte(os.Getenv("JWT_SECRET"))
 
-		tokenStr := parts[1]
-
-		// parse and validate token
 		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
-			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fiber.ErrUnauthorized
-			}
-			return []byte(os.Getenv("JWT_SECRET")), nil
+			return secret, nil
 		})
-
 		if err != nil || !token.Valid {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid or expired token"})
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "invalid token"})
 		}
 
-		// store claims in context for use in handlers
-		claims := token.Claims.(jwt.MapClaims)
-		c.Locals("user_id", claims["user_id"])
-		c.Locals("username", claims["username"])
-		c.Locals("role", claims["role"])
-
+		c.Locals("user", token.Claims)
 		return c.Next()
 	}
 }
 
 func GetRole(c *fiber.Ctx) string {
-	authHeader := c.Get("Authorization")
-	parts := strings.Split(authHeader, " ")
-	if len(parts) != 2 {
+	claims, ok := c.Locals("user").(jwt.MapClaims)
+	if !ok {
 		return ""
 	}
-
-	token, err := jwt.Parse(parts[1], func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fiber.ErrUnauthorized
-		}
-		return []byte(os.Getenv("JWT_SECRET")), nil
-	})
-
-	if err != nil || !token.Valid {
-		return ""
-	}
-
-	claims := token.Claims.(jwt.MapClaims)
 	role, _ := claims["role"].(string)
 	return role
+}
+
+func GetUserID(c *fiber.Ctx) uint {
+	claims, ok := c.Locals("user").(jwt.MapClaims)
+	if !ok {
+		return 0
+	}
+	id, _ := claims["user_id"].(float64)
+	return uint(id)
+}
+
+func GetTeacherID(c *fiber.Ctx) uint {
+	claims, ok := c.Locals("user").(jwt.MapClaims)
+	if !ok {
+		return 0
+	}
+	id, _ := claims["teacher_id"].(float64)
+	return uint(id)
+}
+
+func GetStudentID(c *fiber.Ctx) uint {
+	claims, ok := c.Locals("user").(jwt.MapClaims)
+	if !ok {
+		return 0
+	}
+	id, _ := claims["student_id"].(float64)
+	return uint(id)
 }
