@@ -14,7 +14,7 @@ function openModal(cls = null) {
     if (cls) {
         document.getElementById('modalTitle').textContent  = 'Edit Class'
         document.getElementById('classId').value          = cls.id
-        document.getElementById('classNo').value          = cls.class
+        document.getElementById('classNo').value          = cls.class || cls.number
         document.getElementById('section').value          = cls.section
         document.getElementById('teacherName').value      = cls.teacher_name
         document.getElementById('teacherContact').value   = cls.teacher_contact

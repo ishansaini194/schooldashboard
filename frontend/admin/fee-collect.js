@@ -42,19 +42,23 @@ async function loadAllStudents(preSelectId = null) {
     const classes = await classRes.json()
 
     const promises = classes.map(c =>
-        authFetch(`${API}/students/class/${c.class}`).then(r => r.json())
+        authFetch(`${API}/students/class/${c.class}?section=${encodeURIComponent(c.section || '')}`).then(r => r.json())
     )
     const results = await Promise.all(promises)
     allStudents = results.flat().filter(Boolean)
 
+    // classMap keyed by "class|section" for exact lookup
     window.classMap = {}
-    classes.forEach(c => { window.classMap[c.class] = c })
+    classes.forEach(c => {
+        window.classMap[`${c.class}|${c.section || ''}`] = c
+        window.classMap[c.class] = c // fallback for single-section classes
+    })
 
     if (preSelectId) {
         const s = allStudents.find(s => s.id == preSelectId)
         if (s) {
             selectStudent(s)
-            await checkExistingFee(preSelectId)  // ← add this
+            await checkExistingFee(preSelectId)
         }
     }
 }
@@ -64,14 +68,17 @@ async function checkExistingFee(studentId) {
     const year = document.getElementById('feeYear').value
 
     const res = await authFetch(`${API}/fees/student/${studentId}`)
+    if (!res || !res.ok) return
     const fees = await res.json() || []
 
-    const existing = fees.find(f => f.month === month && f.year == year)
+    // month is returned as name string ("April") from new handler
+    const existing = fees.find(f =>
+        f.month === month && String(f.year) === String(year)
+    )
 
     if (!existing) return
 
     if (existing.status === 'paid') {
-        // fully paid — disable form
         showToast('Fee already fully paid for this month', 'error')
         document.getElementById('feeForm').querySelectorAll('input, select, button[type="submit"]')
             .forEach(el => el.disabled = true)
@@ -82,7 +89,6 @@ async function checkExistingFee(studentId) {
     }
 
     if (existing.status === 'partial') {
-        // pre-fill remaining amount
         document.getElementById('baseAmount').value = existing.final_amount
         document.getElementById('finalAmount').value = existing.remaining
         document.getElementById('paidAmount').value = existing.remaining
@@ -90,10 +96,9 @@ async function checkExistingFee(studentId) {
 
         document.getElementById('paymentStatus').className = 'payment-status partial'
         document.getElementById('paymentStatus').textContent =
-            `⚠ Partial payment exists — ₹${existing.remaining} remaining from previous payment`
+            `⚠ Partial payment exists — ₹${existing.remaining} remaining`
         document.getElementById('paymentStatus').style.display = 'block'
 
-        // store existing fee id for update
         window.existingFeeId = existing.id
     }
 }
@@ -144,13 +149,15 @@ function selectStudent(s) {
     document.getElementById('ssAvatar').textContent = s.name ? s.name[0].toUpperCase() : '?'
     document.getElementById('ssName').textContent = s.name
     document.getElementById('ssMeta').textContent =
-        `Class ${s.class} · Roll ${s.roll_no || '—'} · ${s.epunjab_id || 'No ePunjab ID'}`
+        `Class ${s.class}${s.section ? ' — ' + s.section : ''} · Roll ${s.roll_no || '—'} · ${s.epunjab_id || 'No ePunjab ID'}`
 
     // fill hidden fields
     document.getElementById("studentId").value = s.id
     document.getElementById('studentEpunjab').value = s.epunjab_id || ''
     document.getElementById('studentName').value = s.name
     document.getElementById('studentClass').value = s.class
+    // store enrollment_id for new schema
+    window.enrollmentId = s.enrollment_id || null
 
     // auto-fill base amount from class
     updateBaseAmount()
@@ -171,7 +178,9 @@ function clearStudent() {
 function updateBaseAmount() {
     if (!selectedStudent) return
     const feeType = document.getElementById('feeType').value
-    const cls = window.classMap?.[selectedStudent.class]
+    // try exact class|section key first, fall back to class only
+    const key = `${selectedStudent.class}|${selectedStudent.section || ''}`
+    const cls = window.classMap?.[key] || window.classMap?.[selectedStudent.class]
     if (!cls) return
 
     const base = feeType === 'tuition' ? cls.tuition_fee : cls.transport_fee
@@ -266,20 +275,21 @@ document.getElementById('feeForm').addEventListener('submit', async function (e)
 
         // normal new payment flow
         const data = {
-            student_id: parseInt(document.getElementById('studentId').value),
-            epunjab_id: document.getElementById('studentEpunjab').value,
-            student_name: document.getElementById('studentName').value,
-            roll_no: selectedStudent.roll_no || '',
-            class: document.getElementById('studentClass').value,
-            section: selectedStudent.section || '',
-            month: document.getElementById('feeMonth').value,
-            year: parseInt(document.getElementById('feeYear').value),
-            fee_type: document.getElementById('feeType').value,
-            base_amount: parseInt(document.getElementById('baseAmount').value) || 0,
-            discount: parseInt(document.getElementById('discount').value) || 0,
+            student_id:     parseInt(document.getElementById('studentId').value),
+            enrollment_id:  window.enrollmentId || null,
+            epunjab_id:     document.getElementById('studentEpunjab').value,
+            student_name:   document.getElementById('studentName').value,
+            roll_no:        selectedStudent.roll_no || '',
+            class:          document.getElementById('studentClass').value,
+            section:        selectedStudent.section || '',
+            month:          document.getElementById('feeMonth').value,
+            year:           parseInt(document.getElementById('feeYear').value),
+            fee_type:       document.getElementById('feeType').value,
+            base_amount:    parseInt(document.getElementById('baseAmount').value) || 0,
+            discount:       parseInt(document.getElementById('discount').value) || 0,
             discount_reason: document.getElementById('discountReason').value,
-            paid_amount: paidAmount,
-            due_date: document.getElementById('dueDate').value,
+            paid_amount:    paidAmount,
+            due_date:       document.getElementById('dueDate').value,
         }
 
         const res = await authFetch(`${API}/fees/pay`, {
