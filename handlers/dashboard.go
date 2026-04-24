@@ -9,60 +9,74 @@ import (
 	"github.com/ishansaini194/dashboard/models"
 )
 
+// GET /api/dashboard/summary?month=April&year=2026
 func GetDashboardSummary(c *fiber.Ctx) error {
 	month := c.Query("month", time.Now().Format("January"))
 	year := c.Query("year", fmt.Sprintf("%d", time.Now().Year()))
+	monthInt := monthNums[month]
+	ayID := currentAcademicYearID()
+	sid := schoolID()
 
-	// total students
+	// total students (active enrollments this year)
 	var studentCount int64
-	database.DB.Model(&models.Student{}).Count(&studentCount)
+	database.DB.Model(&models.Enrollment{}).
+		Joins("JOIN classes ON classes.id = enrollments.class_id").
+		Where("classes.school_id = ? AND enrollments.academic_year_id = ? AND enrollments.status = 'active'", sid, ayID).
+		Count(&studentCount)
 
 	// total classes
 	var classCount int64
-	database.DB.Model(&models.Class{}).Count(&classCount)
+	database.DB.Model(&models.Class{}).Where("school_id = ?", sid).Count(&classCount)
 
-	// fees this month
-	var fees []models.Fee
-	database.DB.Where("month = ? AND year = ?", month, year).Find(&fees)
+	// fees collected this month
+	var totalCollected int
+	database.DB.Model(&models.Payment{}).
+		Joins("JOIN fees ON fees.id = payments.fee_id").
+		Joins("JOIN enrollments ON enrollments.id = fees.enrollment_id").
+		Joins("JOIN classes ON classes.id = enrollments.class_id").
+		Where("classes.school_id = ? AND fees.month = ? AND fees.year = ?", sid, monthInt, year).
+		Select("COALESCE(SUM(payments.amount), 0)").Scan(&totalCollected)
 
-	totalCollected := 0
-	for _, f := range fees {
-		totalCollected += f.PaidAmount
+	// expected total (sum of tuition fees for all enrolled students)
+	type EnrollmentClass struct {
+		TuitionFee int
 	}
-
-	// students who paid fully this month
-	paidStudentIDs := map[uint]bool{}
-	for _, f := range fees {
-		if f.Status == "paid" {
-			paidStudentIDs[f.StudentID] = true
-		}
-	}
-
-	pendingCount := int(studentCount) - len(paidStudentIDs)
-
-	// overdue count
-	today := time.Now().Format("2006-01-02")
-	var overdueCount int64
-	database.DB.Model(&models.Fee{}).
-		Where("status = ? AND due_date != '' AND due_date < ?", "partial", today).
-		Count(&overdueCount)
-
-	// expected total — 2 queries only
-	var students []models.Student
-	database.DB.Find(&students)
-
-	var classes []models.Class
-	database.DB.Find(&classes)
-
-	classMap := map[string]int{}
-	for _, cls := range classes {
-		classMap[fmt.Sprintf("%d", cls.Class)] = cls.TuitionFee
-	}
+	var ecs []EnrollmentClass
+	database.DB.Table("enrollments").
+		Select("classes.tuition_fee").
+		Joins("JOIN classes ON classes.id = enrollments.class_id").
+		Where("classes.school_id = ? AND enrollments.academic_year_id = ? AND enrollments.status = 'active'", sid, ayID).
+		Scan(&ecs)
 
 	expectedTotal := 0
-	for _, s := range students {
-		expectedTotal += classMap[s.Class]
+	for _, ec := range ecs {
+		expectedTotal += ec.TuitionFee
 	}
+
+	// pending count (students who haven't fully paid this month)
+	var paidEnrollmentIDs []uint
+	database.DB.Model(&models.Fee{}).
+		Joins("JOIN enrollments ON enrollments.id = fees.enrollment_id").
+		Joins("JOIN classes ON classes.id = enrollments.class_id").
+		Where("classes.school_id = ? AND fees.month = ? AND fees.year = ? AND fees.status = 'paid'",
+			sid, monthInt, year).
+		Pluck("fees.enrollment_id", &paidEnrollmentIDs)
+
+	pendingCount := int(studentCount) - len(paidEnrollmentIDs)
+	if pendingCount < 0 {
+		pendingCount = 0
+	}
+
+	// overdue (partial fees from previous months)
+	currentMonthInt := int(time.Now().Month())
+	currentYear := time.Now().Year()
+	var overdueCount int64
+	database.DB.Model(&models.Fee{}).
+		Joins("JOIN enrollments ON enrollments.id = fees.enrollment_id").
+		Joins("JOIN classes ON classes.id = enrollments.class_id").
+		Where("classes.school_id = ? AND fees.status = 'partial' AND (fees.year < ? OR (fees.year = ? AND fees.month < ?))",
+			sid, currentYear, currentYear, currentMonthInt).
+		Count(&overdueCount)
 
 	return c.JSON(fiber.Map{
 		"total_students":  studentCount,
@@ -73,101 +87,5 @@ func GetDashboardSummary(c *fiber.Ctx) error {
 		"overdue_count":   overdueCount,
 		"month":           month,
 		"year":            year,
-	})
-}
-
-// GET /api/fees/recent
-func GetRecentPayments(c *fiber.Ctx) error {
-	var fees []models.Fee
-	database.DB.Where("paid_amount > 0").
-		Order("created_at desc").
-		Limit(5).
-		Find(&fees)
-
-	return c.JSON(fees)
-}
-
-// GET /api/fees/overdue
-func GetOverdueFees(c *fiber.Ctx) error {
-	today := time.Now().Format("2006-01-02")
-
-	var fees []models.Fee
-	database.DB.Where("status = ? AND due_date != '' AND due_date < ?", "partial", today).
-		Order("due_date asc").
-		Find(&fees)
-
-	return c.JSON(fees)
-}
-
-// GET /api/fees/pending/all?month=April&year=2026
-func GetAllPendingFees(c *fiber.Ctx) error {
-	month := c.Query("month", time.Now().Format("January"))
-	year := c.Query("year", fmt.Sprintf("%d", time.Now().Year()))
-
-	// get all students
-	var students []models.Student
-	database.DB.Order("class asc, roll_no asc").Find(&students)
-
-	// get all fees for this month/year
-	var fees []models.Fee
-	database.DB.Where("month = ? AND year = ?", month, year).Find(&fees)
-
-	// map fees by student_id
-	feeMap := map[uint]models.Fee{}
-	for _, f := range fees {
-		feeMap[f.StudentID] = f
-	}
-
-	type PendingStudent struct {
-		StudentID   uint   `json:"student_id"`
-		StudentName string `json:"student_name"`
-		RollNo      string `json:"roll_no"`
-		Class       string `json:"class"`
-		Phone       string `json:"phone"`
-		Status      string `json:"status"`
-		PaidAmount  int    `json:"paid_amount"`
-		Remaining   int    `json:"remaining"`
-		DueDate     string `json:"due_date"`
-		ReceiptNo   string `json:"receipt_no"`
-	}
-
-	var pending []PendingStudent
-	for _, s := range students {
-		f, hasFee := feeMap[s.ID]
-		if !hasFee {
-			// completely unpaid
-			pending = append(pending, PendingStudent{
-				StudentID:   s.ID,
-				StudentName: s.Name,
-				RollNo:      s.RollNo,
-				Class:       s.Class,
-				Phone:       s.Phone,
-				Status:      "unpaid",
-				PaidAmount:  0,
-				Remaining:   0,
-			})
-		} else if f.Status == "partial" {
-			// partial payment
-			pending = append(pending, PendingStudent{
-				StudentID:   s.ID,
-				StudentName: s.Name,
-				RollNo:      s.RollNo,
-				Class:       s.Class,
-				Phone:       s.Phone,
-				Status:      "partial",
-				PaidAmount:  f.PaidAmount,
-				Remaining:   f.Remaining,
-				DueDate:     f.DueDate,
-				ReceiptNo:   f.ReceiptNo,
-			})
-		}
-		// skip fully paid students
-	}
-
-	return c.JSON(fiber.Map{
-		"month":   month,
-		"year":    year,
-		"count":   len(pending),
-		"pending": pending,
 	})
 }
