@@ -2,49 +2,72 @@ package database
 
 import (
 	"log"
+	"os"
 
 	"github.com/ishansaini194/dashboard/models"
-	"github.com/ishansaini194/dashboard/models/academic"
 	"gorm.io/gorm"
 )
 
 func Run(db *gorm.DB) {
-	migrations := []func(*gorm.DB) error{
-		models.MigrateClass,
-		models.MigrateStudent,
-		models.MigrateFee,
-		models.MigrateUser,
-		academic.MigrateHomework,
-		academic.MigrateNotice,
-		academic.MigrateResult,
-		academic.MigratePaper,
+	err := db.AutoMigrate(
+		&models.School{},
+		&models.AcademicYear{},
+		&models.Teacher{},
+		&models.Student{},
+		&models.User{},
+		&models.Class{},
+		&models.Enrollment{},
+		&models.Fee{},
+		&models.Payment{},
+		&models.Homework{},
+		&models.Notice{},
+		&models.Exam{},
+		&models.Result{},
+		&models.Paper{},
+	)
+	if err != nil {
+		log.Fatal("Migration failed:", err)
 	}
+	log.Println("All migrations done")
 
-	for _, m := range migrations {
-		if err := m(db); err != nil {
-			log.Fatal("migration failed: ", err)
-		}
-	}
-
-	// backfill: populate fee.section from student.section for older records
-	backfillFeeSection(db)
-
-	log.Println("all migrations done")
+	seedDefaults(db)
 }
 
-// one-time backfill: copy section from students into fees where section is empty
-func backfillFeeSection(db *gorm.DB) {
-	res := db.Exec(`
-		UPDATE fees
-		SET section = (SELECT section FROM students WHERE students.id = fees.student_id)
-		WHERE (section IS NULL OR section = '')
-		  AND student_id IN (SELECT id FROM students)
-	`)
-	if res.Error != nil {
-		log.Println("fee section backfill skipped:", res.Error)
-		return
+// seedDefaults creates the default School and AcademicYear rows
+// if they don't already exist. Safe to run on every startup.
+func seedDefaults(db *gorm.DB) {
+	schoolName := os.Getenv("SCHOOL_NAME")
+	if schoolName == "" {
+		schoolName = "KRB School"
 	}
-	if res.RowsAffected > 0 {
-		log.Printf("backfilled section on %d fee records\n", res.RowsAffected)
+	schoolCode := os.Getenv("SCHOOL_CODE")
+	if schoolCode == "" {
+		schoolCode = "KRB"
+	}
+
+	var school models.School
+	db.Where("code = ?", schoolCode).First(&school)
+	if school.ID == 0 {
+		school = models.School{Name: schoolName, Code: schoolCode}
+		db.Create(&school)
+		log.Printf("Created school: %s (id=%d)\n", schoolName, school.ID)
+	}
+
+	var ay models.AcademicYear
+	db.Where("school_id = ? AND is_current = true", school.ID).First(&ay)
+	if ay.ID == 0 {
+		ayName := os.Getenv("ACADEMIC_YEAR")
+		if ayName == "" {
+			ayName = "2025-26"
+		}
+		ay = models.AcademicYear{
+			SchoolID:  school.ID,
+			Name:      ayName,
+			StartDate: "2025-04-01",
+			EndDate:   "2026-03-31",
+			IsCurrent: true,
+		}
+		db.Create(&ay)
+		log.Printf("Created academic year: %s (id=%d)\n", ayName, ay.ID)
 	}
 }
